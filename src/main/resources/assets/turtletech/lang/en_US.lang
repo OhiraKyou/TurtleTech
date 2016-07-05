@@ -47,7 +47,7 @@ tile.turtletech:cast_iron_tread.tooltip=Increases movement speed
 # MACHINES
 tile.turtletech:precision_laser_turret.name=Precision Laser Turret
 item.turtletech:turret_extender.name=Turret Extender
-tile.turtletech:turret_extender.name=Turret Extender
+tile.turtletech:turret_extender.tooltip=Extends adjacent turrets when powered
 tile.turtletech:foundry.name=Foundry
 tile.turtletech:foundry.tooltip=Makes cast iron items for less materials than grid crafting
 
