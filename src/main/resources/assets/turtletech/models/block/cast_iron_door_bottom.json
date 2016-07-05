@@ -1,0 +1,7 @@
+{
+    "parent": "block/door_bottom",
+    "textures": {
+        "bottom": "turtletech:blocks/cast_iron_door_lower",
+        "top": "turtletech:blocks/cast_iron_door_upper"
+    }
+}

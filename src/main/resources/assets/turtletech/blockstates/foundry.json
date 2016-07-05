@@ -1,0 +1,45 @@
+{
+    "forge_marker": 1,
+    "defaults": {
+        "textures": {
+            "front": "turtletech:blocks/foundry_front_off",
+            "top": "turtletech:blocks/foundry_top_off"
+        },
+        "model": "turtletech:foundry",
+        "uvlock": true
+    },
+    "variants": {
+        "inventory": { "model": "turtletech:foundry" },
+
+        "facing": {
+            "north": {},
+            "east": { "y": 90 },
+            "south": { "y": 180 },
+            "west": { "y": 270 }
+        },
+
+        "powered": {
+            "true": {
+                "textures": {}
+            },
+            "false": {
+                "textures": {}
+            }
+        },
+
+        "active": {
+            "true": {
+                "textures": {
+                    "front": "turtletech:blocks/foundry_front_on",
+                    "top": "turtletech:blocks/foundry_top_on"
+                }
+            },
+            "false": {
+                "textures": {
+                    "front": "turtletech:blocks/foundry_front_off",
+                    "top": "turtletech:blocks/foundry_top_off"
+                }
+            }
+        }
+    }
+}

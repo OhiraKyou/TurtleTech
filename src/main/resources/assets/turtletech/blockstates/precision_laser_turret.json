@@ -1,0 +1,28 @@
+{
+    "forge_marker": 1,
+    "defaults": {
+        "model": "turtletech:precision_laser_turret",
+        "uvlock": true
+    },
+    "variants": {
+        "normal": { "model": "turtletech:precision_laser_turret" },
+        "inventory": { "model": "turtletech:precision_laser_turret" },
+
+        "facing": {
+            "north": {},
+            "east": { "y": 90 },
+            "south": { "y": 180 },
+            "west": { "y": 270 }
+        },
+
+        "active": {
+            "true": {},
+            "false": {}
+        },
+
+        "powered": {
+            "true": {},
+            "false": {}
+        }
+    }
+}

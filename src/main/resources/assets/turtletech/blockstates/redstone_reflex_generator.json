@@ -1,0 +1,52 @@
+{
+    "forge_marker": 1,
+    "defaults": {
+        "textures": {
+            "side": "turtletech:blocks/redstone_reflex_generator_off",
+            "end": "turtletech:blocks/cast_iron_plate"
+        },
+        "model": "turtletech:redstone_reflex_generator",
+        "uvlock": true
+    },
+    "variants": {
+        "inventory": {
+            "model": "turtletech:redstone_reflex_generator",
+
+            "textures": {
+                "side": "turtletech:blocks/redstone_reflex_generator_on",
+                "end": "turtletech:blocks/cast_iron_plate"
+            }
+        },
+
+        "facing": {
+            "north": {},
+            "east": { "y": 90 },
+            "south": { "y": 180 },
+            "west": { "y": 270 }
+        },
+
+        "powered": {
+            "true": {
+                "textures": {
+                    "side": "turtletech:blocks/redstone_reflex_generator_on",
+                    "end": "turtletech:blocks/cast_iron_plate"
+                }
+            },
+            "false": {
+                "textures": {
+                    "side": "turtletech:blocks/redstone_reflex_generator_off",
+                    "end": "turtletech:blocks/cast_iron_plate"
+                }
+            }
+        },
+
+        "active": {
+            "true": {
+                "textures": {}
+            },
+            "false": {
+                "textures": {}
+            }
+        }
+    }
+}

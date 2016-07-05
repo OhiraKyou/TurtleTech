@@ -1,0 +1,14 @@
+{
+    "parent": "item/handheld_rod",
+    "textures": {
+        "layer0": "turtletech:items/cast_iron_fishingrod_uncast"
+    },
+    "overrides": [
+        {
+            "predicate": {
+                "cast": 1
+            },
+            "model": "turtletech:item/cast_iron_fishingrod_cast"
+        }
+    ]
+}

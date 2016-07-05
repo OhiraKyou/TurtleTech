@@ -1,0 +1,6 @@
+{
+    "parent": "turtletech:item/cast_iron_crossbow",
+    "textures": {
+        "layer0": "turtletech:items/cast_iron_crossbow_pulling_2"
+    }
+}

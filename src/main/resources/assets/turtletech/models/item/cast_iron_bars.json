@@ -1,0 +1,6 @@
+{
+  "parent": "item/generated",
+    "textures": {
+        "layer0": "turtletech:blocks/cast_iron_bars"
+    }
+}

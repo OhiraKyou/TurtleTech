@@ -1,0 +1,63 @@
+itemGroup.turtletech=Turtle Tech
+itemGroup.turtletech.blocks=Turtle Tech
+
+# MISCELLANEOUS CAST IRON  ITEMS
+item.turtletech:cast_iron_arrow.name=Cast Iron Arrow
+item.turtletech:cast_iron_axe.name=Cast Iron Axe
+item.turtletech:cast_iron_bars.name=Cast Iron Bars
+item.turtletech:cast_iron_blend.name=Cast Iron Blend
+item.turtletech:cast_iron_block.name=Cast Iron Block
+item.turtletech:cast_iron_boots.name=Cast Iron Boots
+item.turtletech:cast_iron_bolt.name=Cast Iron Bolt
+item.turtletech:cast_iron_bow.name=Cast Iron Bow
+item.turtletech:cast_iron_chestplate.name=Cast Iron Chestplate
+item.turtletech:cast_iron_crackhammer.name=Cast Iron Crack Hammer
+item.turtletech:cast_iron_crossbow.name=Cast Iron Crossbow
+item.turtletech:cast_iron_door.name=Cast Iron Door
+item.turtletech:cast_iron_fishingrod.name=Cast Iron Fishing Rod
+item.turtletech:cast_iron_gear.name=Cast Iron Gear
+item.turtletech:cast_iron_helmet.name=Cast Iron Helmet
+item.turtletech:cast_iron_hoe.name=Cast Iron Hoe
+item.turtletech:cast_iron_horsearmor.name=Cast Iron Horse Armor
+item.turtletech:cast_iron_ingot.name=Cast Iron Ingot
+item.turtletech:cast_iron_leggings.name=Cast Iron Leg Armor
+item.turtletech:cast_iron_nugget.name=Cast Iron Nugget
+item.turtletech:cast_iron_ore.name=Cast Iron Ore
+item.turtletech:cast_iron_pickaxe.name=Cast Iron Pickaxe
+item.turtletech:cast_iron_powder.name=Powdered Cast Iron
+item.turtletech:cast_iron_rod.name=Cast Iron Rod
+item.turtletech:cast_iron_shears.name=Cast Iron Shears
+item.turtletech:cast_iron_shovel.name=Cast Iron Shovel
+item.turtletech:cast_iron_smallblend.name=Small Pile of Cast Iron Blend
+item.turtletech:cast_iron_smallpowder.name=Small Pile of Powdered Cast Iron
+item.turtletech:cast_iron_sword.name=Cast Iron Sword
+item.turtletech:cast_iron_trapdoor.name=Cast Iron Trapdoor
+item.turtletech:cast_iron_tread.tooltip=Increases movement speed
+
+tile.turtletech:cast_iron_bars.name=Cast Iron Bars
+tile.turtletech:cast_iron_block.name=Cast Iron Block
+tile.turtletech:cast_iron_door.name=Cast Iron Door
+tile.turtletech:cast_iron_plate.name=Cast Iron Plate
+tile.turtletech:cast_iron_trapdoor.name=Cast Iron Trapdoor
+tile.turtletech:cast_iron_frame.name=Cast Iron Frame
+tile.turtletech:cast_iron_casing.name=Cast Iron Casing
+tile.turtletech:cast_iron_tread.name=Cast Iron Tread
+tile.turtletech:cast_iron_tread.tooltip=Increases movement speed
+
+# MACHINES
+tile.turtletech:precision_laser_turret.name=Precision Laser Turret
+item.turtletech:turret_extender.name=Turret Extender
+tile.turtletech:turret_extender.name=Turret Extender
+tile.turtletech:foundry.name=Foundry
+tile.turtletech:foundry.tooltip=Makes cast iron items for less materials than grid crafting
+
+# GENERATORS
+tile.turtletech:creative_generator.name=Creative Generator
+tile.turtletech:redstone_reflex_generator.name=Redstone Reflex Generator
+tile.turtletech:redstone_reflex_generator.tooltip=Generates power from redstone pulses
+tile.turtletech:soul_turbine_generator.name=Soul Turbine Generator
+tile.turtletech:soul_turbine_generator.tooltip=Generates power from the death of nearby entities
+
+# LIQUIDS
+fluid.turtletech.cast_iron=Molten Cast Iron
+tile.turtletech:cast_iron.name=Molten Cast Iron

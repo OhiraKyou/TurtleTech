@@ -1,0 +1,6 @@
+{
+    "parent": "block/trapdoor_top",
+    "textures": {
+        "texture": "turtletech:blocks/cast_iron_trapdoor"
+    }
+}

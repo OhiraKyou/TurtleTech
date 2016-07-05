@@ -1,0 +1,14 @@
+{
+    "parent": "turtletech:block/machine_base",
+    "textures": {
+        "particle": "turtletech:blocks/foundry_side",
+
+        "front": "#front",
+        "back":  "turtletech:blocks/foundry_side",
+
+        "top":   "turtletech:blocks/foundry_top_off",
+        "bottom":"turtletech:blocks/foundry_bottom",
+
+        "side":  "turtletech:blocks/foundry_side"
+    }
+}
