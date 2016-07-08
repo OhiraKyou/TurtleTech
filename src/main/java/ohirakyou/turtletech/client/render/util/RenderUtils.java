@@ -1,8 +1,9 @@
 package ohirakyou.turtletech.client.render.util;
 
 import net.minecraft.client.renderer.VertexBuffer;
-import ohirakyou.turtletech.TurtleTech;
 import ohirakyou.turtletech.util.MathUtils;
+import ohirakyou.turtletech.util.RelativePosition;
+import ohirakyou.turtletech.util.Size3D;
 
 abstract public class RenderUtils {
     public static void addCube(final VertexBuffer vertexBuffer, final TexturedCubeMap cubeMap, final Size3D size) {

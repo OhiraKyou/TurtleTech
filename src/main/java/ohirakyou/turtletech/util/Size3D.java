@@ -1,4 +1,4 @@
-package ohirakyou.turtletech.client.render.util;
+package ohirakyou.turtletech.util;
 
 public class Size3D {
     /** North-south dimension (z). */

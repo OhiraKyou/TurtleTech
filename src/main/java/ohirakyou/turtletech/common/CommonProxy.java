@@ -4,6 +4,7 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
+import ohirakyou.turtletech.client.gui.ModGUI;
 import ohirakyou.turtletech.common.block.ModBlocks;
 import ohirakyou.turtletech.common.tileentity.ModTileEntities;
 import ohirakyou.turtletech.common.crafting.ModCrafting;
@@ -18,11 +19,13 @@ public class CommonProxy {
         ModItems.init();
         ModTileEntities.init();
         //ModFluids.init();
-        //VillagerTrades.init();
+        //ModVillagerTrades.init();
     }
 
     public void init(FMLInitializationEvent event) {
         ModCrafting.init();
+        //ModEntities.init();
+        ModGUI.init();
     }
 
     public void postInit(FMLPostInitializationEvent event) {

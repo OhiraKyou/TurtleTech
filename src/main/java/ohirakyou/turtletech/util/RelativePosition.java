@@ -1,4 +1,4 @@
-package ohirakyou.turtletech.client.render.util;
+package ohirakyou.turtletech.util;
 
 public class RelativePosition {
     /** On a compass, north */

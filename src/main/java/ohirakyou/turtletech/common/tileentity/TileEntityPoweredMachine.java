@@ -22,11 +22,7 @@ public abstract class TileEntityPoweredMachine extends TileEntityMachine {
     public boolean isEnergyProducer;
 
     public TileEntityPoweredMachine(String unlocalizedName){
-        this(unlocalizedName, 0);
-    }
-
-    public TileEntityPoweredMachine(String unlocalizedName, int numInputSlots){
-        super(unlocalizedName, numInputSlots);
+        super(unlocalizedName);
         teslaContainer = new BasicTeslaContainer();
     }
 
@@ -175,15 +171,18 @@ public abstract class TileEntityPoweredMachine extends TileEntityMachine {
 
     // Data management
     @Override
-    protected void saveTo(NBTTagCompound root) {
+    public NBTTagCompound writeToNBT(NBTTagCompound root) {
+        super.writeToNBT(root);
         root.setLong("energy", getEnergy());
+        return root;
     }
 
     @Override
-    protected void loadFrom(NBTTagCompound root) {
+    public void readFromNBT(NBTTagCompound root) {
+        super.readFromNBT(root);
+
         if (root.hasKey("energy")) {
             setEnergy(root.getLong("energy"));
-            //TurtleTech.logger.info("Received packet. Energy: " + getEnergy());
         }
     }
 

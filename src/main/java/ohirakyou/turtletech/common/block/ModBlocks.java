@@ -5,6 +5,7 @@ import net.minecraft.item.Item;
 import net.minecraftforge.oredict.OreDictionary;
 import ohirakyou.turtletech.common.block.generators.creative.CreativeGeneratorBlock;
 import ohirakyou.turtletech.common.block.generators.reflex.RedstoneReflexGeneratorBlock;
+import ohirakyou.turtletech.common.block.generators.soul.SoulTurbineGeneratorBlock;
 import ohirakyou.turtletech.common.block.turrets.TurretExtenderBlock;
 import ohirakyou.turtletech.common.block.turrets.precisionlaserturret.PrecisionLaserTurretBlock;
 import ohirakyou.turtletech.common.item.ItemGroups;
@@ -44,6 +45,7 @@ public class ModBlocks {
 
     public static CreativeGeneratorBlock creative_generator;
     public static RedstoneReflexGeneratorBlock redstone_reflex_generator;
+    public static SoulTurbineGeneratorBlock soul_turbine_generator;
 
     public static Block cast_iron_block;
     public static Block cast_iron_plate;
@@ -63,6 +65,7 @@ public class ModBlocks {
         // Generators
         creative_generator = addBlock(new CreativeGeneratorBlock(), "creative_generator");
         redstone_reflex_generator = addBlock(new RedstoneReflexGeneratorBlock(), "redstone_reflex_generator");
+        soul_turbine_generator = addBlock(new SoulTurbineGeneratorBlock(), "soul_turbine_generator");
 
         // Auto-generated blocks
         cast_iron_block = createBlock(Materials.cast_iron);

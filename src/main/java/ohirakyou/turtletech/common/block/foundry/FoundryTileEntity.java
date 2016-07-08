@@ -34,31 +34,4 @@ public class FoundryTileEntity extends TileEntityMachine {
         return true;
     }
 
-
-
-    // Data management
-
-    @Override
-    public int[] getDataFieldArray() {
-        return dataArray;
-    }
-
-    @Override
-    public void prepareDataFieldsForSync() {
-        //dataArray[0] = Float.floatToIntBits(getEnergy());
-    }
-
-    @Override
-    public void onDataFieldUpdate() {
-        //this.setAThing(Float.intBitsToFloat(dataArray[0]));
-    }
-
-    @Override
-    protected void saveTo(NBTTagCompound root) {
-    }
-
-    @Override
-    protected void loadFrom(NBTTagCompound root) {
-    }
-
 }

@@ -5,6 +5,7 @@ import ohirakyou.turtletech.common.block.foundry.FoundryTileEntity;
 import ohirakyou.turtletech.common.block.generators.creative.CreativeGeneratorBlock;
 import ohirakyou.turtletech.common.block.generators.creative.CreativeGeneratorTileEntity;
 import ohirakyou.turtletech.common.block.generators.reflex.RedstoneReflexGeneratorTileEntity;
+import ohirakyou.turtletech.common.block.generators.soul.SoulTurbineGeneratorTileEntity;
 import ohirakyou.turtletech.common.block.turrets.TurretExtenderTileEntity;
 import ohirakyou.turtletech.common.block.turrets.precisionlaserturret.PrecisionLaserTileEntity;
 import ohirakyou.turtletech.data.DataModInfo;
@@ -16,11 +17,17 @@ public abstract class ModTileEntities {
     public static void init() {
         if (initDone) return;
 
+        // Turrets
         registerTileEntity(PrecisionLaserTileEntity.class);
-        registerTileEntity(FoundryTileEntity.class);
         registerTileEntity(TurretExtenderTileEntity.class);
+
+        // Generators
         registerTileEntity(CreativeGeneratorTileEntity.class);
         registerTileEntity(RedstoneReflexGeneratorTileEntity.class);
+        registerTileEntity(SoulTurbineGeneratorTileEntity.class);
+
+        // Machines
+        registerTileEntity(FoundryTileEntity.class);
 
         initDone = true;
     }

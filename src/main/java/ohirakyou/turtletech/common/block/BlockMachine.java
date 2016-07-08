@@ -24,7 +24,7 @@ import ohirakyou.turtletech.common.item.ItemGroups;
 
 import java.util.Random;
 
-public abstract class BlockMachine extends BlockContainer {
+public abstract class BlockMachine extends BlockGUIContainer {
 
     public static final PropertyDirection FACING = BlockHorizontal.FACING;
     public static final PropertyBool ACTIVE = PropertyBool.create("active");

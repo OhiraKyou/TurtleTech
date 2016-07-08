@@ -57,7 +57,7 @@ tile.turtletech:creative_generator.name=Creative Generator
 tile.turtletech:redstone_reflex_generator.name=Redstone Reflex Generator
 tile.turtletech:redstone_reflex_generator.tooltip=Generates power from redstone pulses
 tile.turtletech:soul_turbine_generator.name=Soul Turbine Generator
-tile.turtletech:soul_turbine_generator.tooltip=Generates power from the death of nearby entities
+tile.turtletech:soul_turbine_generator.tooltip=Generates power from soul sand and nearby death
 
 # LIQUIDS
 fluid.turtletech.cast_iron=Molten Cast Iron

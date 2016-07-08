@@ -18,6 +18,7 @@ import ohirakyou.turtletech.TurtleTech;
 import ohirakyou.turtletech.client.sound.ModSounds;
 import ohirakyou.turtletech.common.tileentity.TileEntityTurret;
 import ohirakyou.turtletech.util.MathUtils;
+import ohirakyou.turtletech.util.SimpleRotation;
 
 import javax.vecmath.Vector2f;
 import java.util.ArrayList;
@@ -43,7 +44,7 @@ public class PrecisionLaserTileEntity extends TileEntityTurret {
 
     // Rendering
     public static final float IDLE_TICK_DEGREES = 0.75f;
-    public static final float AGGRESSIVE_TICK_DEGREES = 8f;
+    public static final float AGGRESSIVE_TICK_DEGREES = 4f;
     public static final float POWERING_UP_OR_DOWN_TICK_DEGREES = 2f;
     public static final float POWERED_DOWN_PITCH = -15f;
 
@@ -59,7 +60,7 @@ public class PrecisionLaserTileEntity extends TileEntityTurret {
 
 
     public PrecisionLaserTileEntity() {
-        super(PrecisionLaserTileEntity.class.getSimpleName(), 0, 30f, 15f, 32f);
+        super(PrecisionLaserTileEntity.class.getSimpleName(), 30f, 15f, 32f);
 
         becomeBufferedEnergyConsumer(ENERGY_CAPACITY, ENERGY_INPUT_PER_TICK, ENERGY_PER_SHOT);
 
@@ -97,7 +98,11 @@ public class PrecisionLaserTileEntity extends TileEntityTurret {
         updateActivity();
 
         if (isClient()) {
-            //if (!isFiring()) { rotateBarrel(); }
+            // Saving the previous state here ensures that it's updated even if the barrel doesn't rotate
+            previousYaw = currentYaw;
+            previousPitch = currentPitch;
+
+            //if (!isFiring()) {rotateBarrel();}
             rotateBarrel();
         }
     }
@@ -152,6 +157,8 @@ public class PrecisionLaserTileEntity extends TileEntityTurret {
         }
     }
 
+
+    //todo Move turret base position check from the TESR to here.
     /*
     private void updateAttachmentPoint() {
         if (attachmentBlock == null) {
@@ -170,9 +177,6 @@ public class PrecisionLaserTileEntity extends TileEntityTurret {
 
     private void rotateBarrel() {
         if (isClient()) {
-            previousYaw = currentYaw;
-            previousPitch = currentPitch;
-
             // Get target rotation and max degrees to turn
             float degreesPerTick;
 
@@ -184,9 +188,9 @@ public class PrecisionLaserTileEntity extends TileEntityTurret {
 
                     if (target != null) {
                         // Face target
-                        Vector2f simulatedLookAt = simulateLookAt(target);
-                        targetYaw = simulatedLookAt.x;
-                        targetPitch = simulatedLookAt.y;
+                        SimpleRotation simulatedLookAt = simulateLookAt(target);
+                        targetPitch = simulatedLookAt.pitch;
+                        targetYaw = simulatedLookAt.yaw;
                         //TurtleTech.logger.info("Target locked. Turning to rotate at degrees: " + targetYaw);
                     } else {
                         //TurtleTech.logger.info("Target is null in barrel rotation");
@@ -283,17 +287,19 @@ public class PrecisionLaserTileEntity extends TileEntityTurret {
 
 
     private List<Entity> getLaserAttackVictims(){
-        float correctedYaw = MathUtils.changeYawRelativity(EnumFacing.EAST, getFacing(), targetYaw);
-
-        final Vec3d origin = getOpticPosition();
-        final Vec3d dir;
         final World w = getWorld();
         final Entity e = w.getEntityByID(targetID);
+        final Vec3d origin = getOpticPosition();
+        final Vec3d dir;
+
+        SimpleRotation simulatedLookAt = simulateLookAt(e);
+        float simulatedPitch = simulatedLookAt.pitch;
+        float simulatedYaw = simulatedLookAt.yaw;
 
         if (e != null){
             dir = e.getPositionVector().addVector(0, 0.5 * e.height, 0).subtract(origin).normalize();
         } else {
-            dir = (new Vec3d(Math.cos(DEGREES_TO_RADIANS * correctedYaw),Math.sin(currentPitch),Math.sin(correctedYaw))).normalize();
+            dir = (new Vec3d(Math.cos(DEGREES_TO_RADIANS * simulatedYaw),Math.sin(simulatedPitch),Math.sin(simulatedYaw))).normalize();
         }
 
         final Vec3d terminus = MathUtils.followRayToSolidBlock(getWorld(), origin, dir, forwardRange);
@@ -343,7 +349,6 @@ public class PrecisionLaserTileEntity extends TileEntityTurret {
 
     @Override
     public boolean isPowered(){
-        //return super.isPowered() &&
         return hasEnergy(ENERGY_PER_SHOT);
     }
 

@@ -14,6 +14,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.*;
 import net.minecraft.world.World;
 import ohirakyou.turtletech.util.MathUtils;
+import ohirakyou.turtletech.util.SimpleRotation;
 
 import javax.vecmath.Vector2f;
 import java.util.List;
@@ -53,9 +54,8 @@ public abstract class TileEntityTurret extends TileEntityPoweredMachine {
     public float targetPitch;
 
 
-    public TileEntityTurret(String unlocalizedName, int numInputSlots,
-                            float hRange, float vRange, float forwardRange) {
-        super(TileEntityTurret.class.getSimpleName(), numInputSlots);
+    public TileEntityTurret(String unlocalizedName, float hRange, float vRange, float forwardRange) {
+        super(TileEntityTurret.class.getSimpleName());
 
         this.hRange = hRange;
         this.vRange = vRange;
@@ -209,6 +209,7 @@ public abstract class TileEntityTurret extends TileEntityPoweredMachine {
         return true;
     }
 
+    /*
     protected void lookAt(Entity e) {
         Vec3d pos = e.getPositionVector().addVector(0, e.height*0.5, 0);
         targetPosition(pos);
@@ -225,10 +226,10 @@ public abstract class TileEntityTurret extends TileEntityPoweredMachine {
 
         targetYaw = MathUtils.changeYawRelativity(getFacing(), EnumFacing.EAST, targetYaw);
         //TurtleTech.logger.info("Corrected: " + MathUtils.changeYawRelativity(getFacing(), EnumFacing.EAST, targetYaw));
-    }
+    }*/
 
 
-    protected Vector2f simulateLookAt(Entity e) {
+    protected SimpleRotation simulateLookAt(Entity e) {
         Vec3d coord = e.getPositionVector().addVector(0, e.height*0.5, 0);
         //targetPosition(coord);
 
@@ -242,7 +243,7 @@ public abstract class TileEntityTurret extends TileEntityPoweredMachine {
 
         simulatedYaw = MathUtils.changeYawRelativity(getFacing(), EnumFacing.EAST, simulatedYaw);
 
-        return new Vector2f(simulatedYaw, simulatedPitch);
+        return new SimpleRotation(simulatedPitch, 0, simulatedYaw);
     }
 
     private double distance(double x1,double y1,double z1,double x2,double y2,double z2){
@@ -284,7 +285,6 @@ public abstract class TileEntityTurret extends TileEntityPoweredMachine {
             this.targetID = e.getEntityId();
             this.targetLocked = true;
             shotCurrentCharge = shotChargeDuration;
-            lookAt(e);
         }
         this.sync();
     }
@@ -331,7 +331,7 @@ public abstract class TileEntityTurret extends TileEntityPoweredMachine {
 
 
     /**
-     * Can be used to fire a projectile, perform an action, or make a check
+     * Can be used to fire a projectile, perform an action, or make a check.
      * @return  true if turret successfully fired
      */
     public abstract boolean fire();
@@ -342,12 +342,6 @@ public abstract class TileEntityTurret extends TileEntityPoweredMachine {
         return super.isActive();
     }
 
-    /*
-    @Override
-    public boolean isPowered() {
-        return true;
-    }*/
-
     public abstract boolean isFiring();
 
     protected abstract void validateTarget();
@@ -355,41 +349,19 @@ public abstract class TileEntityTurret extends TileEntityPoweredMachine {
 
     // Data management
     @Override
-    protected void saveTo(NBTTagCompound root) {
-        super.saveTo(root);
+    public NBTTagCompound writeToNBT(NBTTagCompound root) {
+        super.writeToNBT(root);
 
-        root.setFloat("pitch", currentPitch);
-        root.setFloat("yaw", currentYaw);
         root.setBoolean("lock", targetLocked);
+        root.setString("team", this.teamIdentity == null ? "" : this.teamIdentity);
+        root.setString("player", this.playerOwner == null ? "" : this.playerOwner);
 
-        if (this.teamIdentity == null) {
-            root.setString("team", "");
-        } else {
-            root.setString("team", teamIdentity);
-        }
-
-        if (this.playerOwner == null) {
-            root.setString("player", "");
-        } else {
-            root.setString("player", playerOwner);
-        }
+        return root;
     }
 
     @Override
-    protected void loadFrom(NBTTagCompound root) {
-        super.loadFrom(root);
-
-        if (root.hasKey("pitch")) {
-            this.currentPitch = root.getFloat("pitch");
-            this.previousPitch = currentPitch;
-            this.targetPitch = currentPitch;
-        }
-
-        if (root.hasKey("yaw")) {
-            this.currentYaw = root.getFloat("yaw");
-            this.previousYaw = currentYaw;
-            this.targetYaw = currentYaw;
-        }
+    public void readFromNBT(NBTTagCompound root) {
+        super.readFromNBT(root);
 
         if (root.hasKey("lock")) {
             targetLocked = root.getBoolean("lock");
@@ -417,18 +389,8 @@ public abstract class TileEntityTurret extends TileEntityPoweredMachine {
 
         if (tag.hasKey("lock")){
             this.targetLocked = tag.getBoolean("lock");
-            if (tag.hasKey("target")){
-                NBTTagCompound target = tag.getCompoundTag("target");
-                this.targetID = target.getInteger("id");
-                Entity e = getWorld().getEntityByID(targetID);
-                if (e != null){
-                    this.lookAt(e);
-                } else {
-                    this.targetYaw = target.getFloat("yaw");
-                    this.targetPitch = target.getFloat("pitch");
-                }
-                this.shotCurrentCharge = target.getByte("charge");
-            }
+            this.targetID = tag.getInteger("targetID");
+            this.shotCurrentCharge = tag.getByte("charge");
         }
     }
 
@@ -437,15 +399,9 @@ public abstract class TileEntityTurret extends TileEntityPoweredMachine {
         NBTTagCompound root = super.getUpdateTag();
 
         root.setBoolean("lock", targetLocked);
-        if (targetLocked) {
-            if (targetID != Integer.MIN_VALUE && getWorld().getEntityByID(targetID) != null) {
-                NBTTagCompound target = new NBTTagCompound();
-                target.setInteger("id", this.targetID);
-                target.setFloat("yaw", targetYaw);
-                target.setFloat("pitch", targetPitch);
-                target.setByte("charge", (byte)shotCurrentCharge);
-                root.setTag("target", target);
-            }
+        if (targetLocked && targetID != Integer.MIN_VALUE && getWorld().getEntityByID(targetID) != null) {
+            root.setInteger("targetID", this.targetID);
+            root.setByte("charge", (byte)shotCurrentCharge);
         }
 
         return root;
