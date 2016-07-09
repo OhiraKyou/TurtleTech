@@ -4,12 +4,12 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import ohirakyou.turtletech.TurtleTech;
 
 
 public abstract class TileEntitySimple extends TileEntity implements ITickable {
@@ -19,7 +19,6 @@ public abstract class TileEntitySimple extends TileEntity implements ITickable {
     private final int powerUpdateInterval = 8;
 
     private NBTTagCompound oldSyncCompound = new NBTTagCompound();
-    //private NBTTagCompound newSyncCompound = new NBTTagCompound();
 
 
     public TileEntitySimple(String unlocalizedName){
@@ -44,12 +43,10 @@ public abstract class TileEntitySimple extends TileEntity implements ITickable {
                 playerMP.connection.sendPacket(packet);
             }
         }
-
-        oldSyncCompound = (NBTTagCompound)packet.getNbtCompound().copy();
     }
 
     /** Sends a one-time update, such as resetting the life of client-side visual effects. */
-    protected final void sendUpdateTag(NBTTagCompound updateTag) {
+    protected final void sendSyncTag(NBTTagCompound updateTag) {
         SPacketUpdateTileEntity packet =  new SPacketUpdateTileEntity(getPos(), 0, updateTag);
 
         for (EntityPlayer player : getWorld().playerEntities){
@@ -61,10 +58,42 @@ public abstract class TileEntitySimple extends TileEntity implements ITickable {
     }
 
     /**
+     * Gets NBT data to be automatically synced at a regular interval.
+     * <p>
+     * The client often only needs a mostly full data sync, provided by getUpdateTag, when loading a chunk.
+     * After that, the client can infer data and be slightly wrong without significant consequence.
+     * This sync should be used for major state changes, leaving the rest to be inferred by the client.
+     * <p>
+     * For example, a furnace or crusher might need to notify clients about its progress when they load in.
+     * However, after that, the client can simply keep track of the progress by itself without actually
+     * performing any action once it thinks the progress is finished until the server says it's OK to do so.
+     * In this case, a significant state change to be automatically synced here might be an inventory slot update
+     * once the server recognizes that the process has been truly finished.
+     *
+     * @return the NBT compound to be checked for inequality and then, if necessary, synced
+     */
+    private NBTTagCompound getSyncTag() {
+        return writeSyncNBT(getBaseUpdateTag());
+    }
+
+    /**
+     * Override this to sync data saved to the returned NBT compound.
+     *
+     * @param root  the NBT compound to be synced
+     * @return the compound, with data to be synced written to it
+     */
+    protected NBTTagCompound writeSyncNBT(NBTTagCompound root) {
+        return root;
+    }
+
+
+    /**
      * Gets a tag with coordinates as a base for one-time updates.
      *
      * The information written identifies the receiving entity.
      * Without this information, which includes coordinates, syncing will fail.
+     *
+     * @return a basic template tag from TileEntity that contains entity-identifying information for syncing
      */
     protected final NBTTagCompound getBaseUpdateTag() {
         return super.getUpdateTag();
@@ -87,17 +116,18 @@ public abstract class TileEntitySimple extends TileEntity implements ITickable {
     public final void update() {
         this.tickUpdate(this.isServer());
         if(this.isServer() && ((this.getWorld().getTotalWorldTime() + this.getTickOffset()) % powerUpdateInterval == 0)){
-            this.powerUpdate();
+            this.staggeredServerUpdate();
         }
     }
 
-    /** Used to sync energy and other data that the client should be kept updated about */
-    public void powerUpdate() {
-        NBTTagCompound newSyncCompound = getUpdateTag();
+    /** Used to sync data like energy and perform other state changes at a regular interval. */
+    public void staggeredServerUpdate() {
+        NBTTagCompound newSyncCompound = getSyncTag();
 
         // Automatically detect when a sync is needed
         if (!(oldSyncCompound.equals(newSyncCompound))) {
-            this.sync();
+            sendSyncTag(newSyncCompound);
+            oldSyncCompound = (NBTTagCompound)newSyncCompound.copy();
         }
     }
 

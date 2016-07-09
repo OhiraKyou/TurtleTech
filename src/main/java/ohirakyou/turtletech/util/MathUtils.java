@@ -16,7 +16,7 @@ public class MathUtils {
     }
 
     /** A wrapper for using min and max at the same time. */
-    public static float clamp(int val, int min, int max) {
+    public static int clamp(int val, int min, int max) {
         return Math.max(min, Math.min(max, val));
     }
 

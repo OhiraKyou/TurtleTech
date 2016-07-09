@@ -50,14 +50,16 @@ item.turtletech:turret_extender.name=Turret Extender
 item.turtletech:turret_extender.tooltip=Extends adjacent turrets when powered
 tile.turtletech:turret_extender.name=Turret Extender
 tile.turtletech:foundry.name=Foundry
-tile.turtletech:foundry.tooltip=Makes cast iron items for less materials than grid crafting
+tile.turtletech:foundry.tooltip=Casts molten substances into ingots
+tile.turtletech:crucible.name=Crucible
+tile.turtletech:crucible.tooltip=Melts substances
 
 # GENERATORS
 tile.turtletech:creative_generator.name=Creative Generator
 tile.turtletech:redstone_reflex_generator.name=Redstone Reflex Generator
 tile.turtletech:redstone_reflex_generator.tooltip=Generates power from redstone pulses
 tile.turtletech:soul_turbine_generator.name=Soul Turbine Generator
-tile.turtletech:soul_turbine_generator.tooltip=Generates power from soul sand and nearby death
+tile.turtletech:soul_turbine_generator.tooltip=Generates power from souls
 
 # LIQUIDS
 fluid.turtletech.cast_iron=Molten Cast Iron

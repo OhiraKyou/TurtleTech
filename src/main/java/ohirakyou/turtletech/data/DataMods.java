@@ -14,4 +14,7 @@ public final class DataMods {
 
     // Power systems
     public static final String TESLA = "Tesla";
+
+    // Miscellaneous
+    public static final String ENDERIO = "EnderIO";
 }

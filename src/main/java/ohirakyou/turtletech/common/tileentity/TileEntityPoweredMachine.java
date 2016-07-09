@@ -2,7 +2,6 @@ package ohirakyou.turtletech.common.tileentity;
 
 import net.darkhax.tesla.capability.TeslaCapabilities;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
@@ -34,8 +33,8 @@ public abstract class TileEntityPoweredMachine extends TileEntityMachine {
     }
 
     @Override
-    public void powerUpdate(){
-        super.powerUpdate();
+    public void staggeredServerUpdate(){
+        super.staggeredServerUpdate();
         this.setPoweredState(this.isPowered());
     }
 
@@ -104,6 +103,10 @@ public abstract class TileEntityPoweredMachine extends TileEntityMachine {
         teslaContainer.generatePower();
     }
 
+    public void generateEnergy(long energy) {
+        teslaContainer.generatePower(energy);
+    }
+
     public void distributeEnergyFromBuffer() {
         teslaContainer.distributePowerFromBuffer(getWorld(), getPos());
     }
@@ -147,12 +150,13 @@ public abstract class TileEntityPoweredMachine extends TileEntityMachine {
     public void setPoweredState(boolean powered){
         IBlockState oldState = getWorld().getBlockState(getPos());
         if(oldState.getBlock() instanceof BlockMachine
-                && (Boolean)oldState.getValue(BlockMachine.POWERED) != powered ){
+                && oldState.getValue(BlockMachine.POWERED) != powered ){
             final TileEntity save = this;
             final World w = getWorld();
             final BlockPos pos = this.getPos();
             IBlockState newState = oldState.withProperty(BlockMachine.POWERED, powered);
             w.setBlockState(pos, newState, 3);
+
             if(save != null){
                 w.removeTileEntity(pos);
                 save.validate();

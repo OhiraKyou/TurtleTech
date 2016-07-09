@@ -16,6 +16,7 @@ import ohirakyou.turtletech.TurtleTech;
 import ohirakyou.turtletech.common.material.Materials;
 import ohirakyou.turtletech.common.block.ModBlocks;
 import ohirakyou.turtletech.common.item.ModItems;
+import ohirakyou.turtletech.data.DataMods;
 
 //// TODO: 6/14/2016  Automate creation of recipe enable/disable toggles in config
 
@@ -45,23 +46,67 @@ public final class ModCrafting {
                 'i', ModItems.cast_iron_ingot, 'b', ModBlocks.cast_iron_block));
 
 
+
         // Generators
-        GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(ModBlocks.redstone_reflex_generator),
-                ModBlocks.cast_iron_casing, Blocks.PISTON, "dustRedstone", "ingotIron"));
+        GameRegistry.addRecipe(new ShapedOreRecipe(ModBlocks.redstone_reflex_generator,
+                " p ",
+                "oio",
+                "rcr",
+                'p', Blocks.PISTON,
+                'o', "ingotCopper", 'i', "ingotIron",
+                'r', "dustRedstone", 'c', ModBlocks.cast_iron_casing));
 
+        GameRegistry.addRecipe(new ShapedOreRecipe(ModBlocks.soul_turbine_generator,
+                " s ",
+                "oio",
+                "rcr",
+                's', "ingotSoularium",
+                'o', "ingotCopper", 'i', "ingotIron",
+                'r', "dustRedstone", 'c', ModBlocks.cast_iron_casing));
 
-        // Turrets
-        if (Loader.isModLoaded("electricadvantage")) {
-            GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(ModBlocks.precision_laser_turret),
-                    ModBlocks.cast_iron_casing, "PSU", "blockRedstone", "gemDiamond", "gemEmerald"));
-        } else {
-            GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(ModBlocks.precision_laser_turret), ModBlocks.cast_iron_casing,
-                    "blockRedstone", "gemDiamond", "gemEmerald"));
+        if (!(Loader.isModLoaded(DataMods.ENDERIO))) {
+            // Fallback for when EnderIO is not installed. 1x soul sand and 1x gold is equivalent to soularium
+            // The extra gold ingot compensates for not requiring power to craft the soularium
+            GameRegistry.addRecipe(new ShapedOreRecipe(ModBlocks.soul_turbine_generator,
+                    "gsg",
+                    "oio",
+                    "rcr",
+                    'g', "ingotGold",'s', Blocks.SOUL_SAND,
+                    'o', "ingotCopper", 'i', "ingotIron",
+                    'r', "dustRedstone", 'c', ModBlocks.cast_iron_casing));
         }
 
 
-        GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(ModBlocks.turret_extender),
-                ModBlocks.cast_iron_casing, Blocks.PISTON, "dustRedstone", "plateCastIron"));
+
+        // Turrets
+        GameRegistry.addRecipe(new ShapedOreRecipe(ModBlocks.precision_laser_turret,
+                "pde",
+                "rcr",
+                'p', "PSU", 'd', "gemDiamond", 'e', "gemEmerald",
+                'r', "dustRedstone", 'c', ModBlocks.cast_iron_casing));
+
+        GameRegistry.addRecipe(new ShapedOreRecipe(ModBlocks.precision_laser_turret,
+                "ped",
+                "rcr",
+                'p', "PSU", 'd', "gemDiamond", 'e', "gemEmerald",
+                'r', "dustRedstone", 'c', ModBlocks.cast_iron_casing));
+
+        if (!(Loader.isModLoaded(DataMods.ELECTRIC_ADVANTAGE))) {
+            // Fallback for when Electric Advantage is not installed
+            GameRegistry.addRecipe(new ShapedOreRecipe(ModBlocks.precision_laser_turret,
+                    "ede",
+                    "rcr",
+                    'd', "gemDiamond", 'e', "gemEmerald",
+                    'r', "dustRedstone", 'c', ModBlocks.cast_iron_casing));
+        }
+
+        GameRegistry.addRecipe(new ShapedOreRecipe(ModBlocks.turret_extender,
+                " p ",
+                " i ",
+                "rcr",
+                'p', "plateCastIron", 'i', Blocks.PISTON,
+                'r', "dustRedstone", 'c', ModBlocks.cast_iron_casing));
+
 
 
         // Machines

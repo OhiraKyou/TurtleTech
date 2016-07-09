@@ -348,6 +348,7 @@ public abstract class TileEntityTurret extends TileEntityPoweredMachine {
 
 
     // Data management
+
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound root) {
         super.writeToNBT(root);
@@ -367,6 +368,14 @@ public abstract class TileEntityTurret extends TileEntityPoweredMachine {
             targetLocked = root.getBoolean("lock");
         }
 
+        if (root.hasKey("targetID")) {
+            this.targetID = root.getInteger("targetID");
+        }
+
+        if (root.hasKey("charge")) {
+            this.shotCurrentCharge = root.getByte("charge");
+        }
+
         if (root.hasKey("team")) {
             String teamName = root.getString("team");
             if (teamName.isEmpty()){
@@ -384,14 +393,7 @@ public abstract class TileEntityTurret extends TileEntityPoweredMachine {
     @Override
     public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity packet) {
         super.onDataPacket(net, packet);
-
-        NBTTagCompound tag = packet.getNbtCompound();
-
-        if (tag.hasKey("lock")){
-            this.targetLocked = tag.getBoolean("lock");
-            this.targetID = tag.getInteger("targetID");
-            this.shotCurrentCharge = tag.getByte("charge");
-        }
+        readFromNBT(packet.getNbtCompound());
     }
 
     @Override

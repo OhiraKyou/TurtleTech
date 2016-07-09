@@ -11,22 +11,81 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import ohirakyou.turtletech.common.tileentity.TileEntityPoweredMachine;
+import ohirakyou.turtletech.util.MathUtils;
+
+import javax.annotation.Nullable;
 
 public class SoulTurbineGeneratorTileEntity extends TileEntityPoweredMachine {
 
-    private static final long ENERGY_IO = 10L;
-    private static final int POWERED_STATE_DURATION = 10;
+    private static final long ENERGY_IO = 100L;
 
-    private boolean previouslyRedstonePowered;
-    private int remainingPoweredStateTicks;
+    private static final int INPUT_SLOT_INDEX = 0;
+    private static final int OUTPUT_SLOT_INDEX = 1;
 
     public ItemStackHandler inventory = new ItemStackHandler(2);
 
+    private ItemStack stackBeingConverted;
+    private int currentConversionTicks;
+
 
     public SoulTurbineGeneratorTileEntity() {
-        //super(SoulTurbineGeneratorTileEntity.class.getSimpleName(), 2);
         super(SoulTurbineGeneratorTileEntity.class.getSimpleName());
         becomePureEnergyGenerator(ENERGY_IO);
+    }
+
+    @Override
+    public final void tickUpdate(boolean isServerWorld) {
+        super.tickUpdate(isServerWorld);
+
+        int targetConversionTicks = getItemConversionTicks(stackBeingConverted);
+
+        // Update progress for both the server and client
+        if (stackBeingConverted != null && currentConversionTicks < targetConversionTicks) {
+            currentConversionTicks = Math.min(currentConversionTicks + 1, targetConversionTicks);
+        }
+
+        if (isServer()) {
+            // Generate power during conversion
+            if (currentConversionTicks > 0 && stackBeingConverted != null) {
+                generateEnergy(getItemEnergyRate(stackBeingConverted));
+                distributeEnergyFromBuffer();
+            }
+
+            // Finish conversion
+            if (currentConversionTicks >= targetConversionTicks) {
+                boolean needsSync = false;
+
+                // Create output stack
+                ItemStack outputStack = getConversionOutput(stackBeingConverted);
+
+                if (outputStack != null) {
+                    inventory.insertItem(OUTPUT_SLOT_INDEX, outputStack, false);
+                    needsSync = true;
+                }
+
+                // Reset for next conversion
+                currentConversionTicks = 0;
+                stackBeingConverted = null;
+
+                // Start new conversion when a simulated output merges without remainder
+                ItemStack nextInputStack = inventory.getStackInSlot(INPUT_SLOT_INDEX);
+
+                if (itemHasSoulEnergy(nextInputStack)) {
+                    ItemStack nextOutputStack = getConversionOutput(nextInputStack);
+
+                    if (inventory.insertItem(OUTPUT_SLOT_INDEX, nextOutputStack, true) == null) {
+                        stackBeingConverted = inventory.extractItem(INPUT_SLOT_INDEX, 1, false);
+                        needsSync = true;
+                    }
+                }
+
+                // If a conversion was actually finished or started, sync
+                if (needsSync) {
+                    this.sync();
+                }
+
+            }
+        }
     }
 
     @Override
@@ -48,49 +107,53 @@ public class SoulTurbineGeneratorTileEntity extends TileEntityPoweredMachine {
         return super.getCapability(capability, facing);
     }
 
-    @Override
-    public final void tickUpdate(boolean isServerWorld) {
-        super.tickUpdate(isServerWorld);
-
-        if (isServer()) {
-            if (!previouslyRedstonePowered && hasRedstoneSignal()) {
-                generateAndDistributeEnergy();
-                remainingPoweredStateTicks = POWERED_STATE_DURATION;
-            }
-
-            int previousPoweredTicks = remainingPoweredStateTicks;
-            remainingPoweredStateTicks = Math.max(remainingPoweredStateTicks - 1, 0);
-
-            // Has the generator gone too long without a redstone pulse?
-            if (previousPoweredTicks > 0 && remainingPoweredStateTicks == 0) {
-                // Tell the client about it so visuals can be updated
-                sync();
-            }
-
-        }
-
-        previouslyRedstonePowered = hasRedstoneSignal();
+    public static boolean itemHasSoulEnergy(ItemStack stack) {
+        return getItemSoulEnergy(stack) > 0;
     }
 
-    public boolean itemHasSoulEnergy(ItemStack stack) {
-        return getItemSoulEnergy(stack) > 0 && getItemEnergyRate(stack) > 0;
-    }
-
-    public static int getItemSoulEnergy(ItemStack itemStack) {
-        Item item = itemStack.getItem();
+    public static int getItemConversionTicks(@Nullable ItemStack stack) {
+        if (stack == null) {return 0;}
+        Item item = stack.getItem();
 
         if (item == Item.getItemFromBlock(Blocks.SOUL_SAND)) {
-            return 100;
+            return 125;
         }
 
         return 0;
     }
 
-    public static int getItemEnergyRate(ItemStack itemStack) {
-        Item item = itemStack.getItem();
+    public static int getItemEnergyRate(@Nullable ItemStack stack) {
+        if (stack == null) {return 0;}
+        Item item = stack.getItem();
 
         if (item == Item.getItemFromBlock(Blocks.SOUL_SAND)) {
-            return 10;
+            return 2;
+        }
+
+        return 0;
+    }
+
+    public static int getItemSoulEnergy(@Nullable ItemStack stack) {
+        if (stack == null) {return 0;}
+        return getItemEnergyRate(stack) * getItemConversionTicks(stack);
+    }
+
+    public static ItemStack getConversionOutput(@Nullable ItemStack stack) {
+        if (stack == null) {return null;}
+        Item item = stack.getItem();
+
+        if (item == Item.getItemFromBlock(Blocks.SOUL_SAND)) {
+            return new ItemStack(Item.getItemFromBlock(Blocks.SAND));
+        }
+
+        return null;
+    }
+
+    public float getProgressLevel() {
+        float totalTicks = getItemConversionTicks(stackBeingConverted);
+
+        if (totalTicks > 0) {
+            return MathUtils.clamp01((float)currentConversionTicks / totalTicks);
         }
 
         return 0;
@@ -99,7 +162,7 @@ public class SoulTurbineGeneratorTileEntity extends TileEntityPoweredMachine {
 
     @Override
     public boolean isPowered() {
-        return remainingPoweredStateTicks > 0;
+        return currentConversionTicks > 0;
     }
 
 
@@ -109,13 +172,39 @@ public class SoulTurbineGeneratorTileEntity extends TileEntityPoweredMachine {
     @Override
     public void readFromNBT(NBTTagCompound root) {
         super.readFromNBT(root);
-        inventory.deserializeNBT((NBTTagCompound) root.getTag("inventory"));
+
+        if (root.hasKey("inventory")) {
+            inventory.deserializeNBT(root.getCompoundTag("inventory"));
+        }
+
+        if (root.hasKey("stackBeingConverted")) {
+            stackBeingConverted = ItemStack.loadItemStackFromNBT(root.getCompoundTag("stackBeingConverted"));
+        } else {
+            stackBeingConverted = null;
+        }
+
+        if (root.hasKey("currentConversionTicks")) {
+            currentConversionTicks = (int)root.getShort("currentConversionTicks");
+        }
+    }
+
+    protected NBTTagCompound writeSyncNBT(NBTTagCompound root) {
+        root.setTag("inventory", inventory.serializeNBT());
+
+        if (stackBeingConverted != null) {
+            root.setTag("stackBeingConverted", stackBeingConverted.serializeNBT());
+        }
+
+        return root;
     }
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound root) {
         super.writeToNBT(root);
-        root.setTag("inventory", inventory.serializeNBT());
+
+        writeSyncNBT(root);
+
+        root.setShort("currentConversionTicks", (short)currentConversionTicks);
         return super.writeToNBT(root);
     }
 
@@ -128,5 +217,4 @@ public class SoulTurbineGeneratorTileEntity extends TileEntityPoweredMachine {
     public NBTTagCompound getUpdateTag() {
         return writeToNBT(super.getUpdateTag());
     }
-
 }

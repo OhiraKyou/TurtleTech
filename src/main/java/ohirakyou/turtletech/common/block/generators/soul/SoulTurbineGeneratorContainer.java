@@ -15,17 +15,16 @@ public class SoulTurbineGeneratorContainer extends Container {
     private final SoulTurbineGeneratorTileEntity generator;
     private final IItemHandler generatorInventory;
 
-    private int convertTime;
-    private int totalConvertTime;
 
     public SoulTurbineGeneratorContainer(InventoryPlayer playerInventory, SoulTurbineGeneratorTileEntity te) {
 
         this.generator = te;
         this.generatorInventory = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
 
+
         // Generator inventory slots
         int generatorInputSlotX = 48;
-        int generatorInputSlotY = 21 + 14;
+        int generatorInputSlotY = 21;
         int generatorOutputSlotX = 116;
         int generatorOutputSlotY = generatorInputSlotY;
 
@@ -44,7 +43,7 @@ public class SoulTurbineGeneratorContainer extends Container {
         int slotSize = 16 + playerGuiSlotBorder * 2;
 
         int firstPlayerInventorySlotX = 8;
-        int firstPlayerInventorySlotY = 56 + 14; //todo Find out the starting Y. Why is this 70?
+        int firstPlayerInventorySlotY = 56;
 
         int hotbarY = firstPlayerInventorySlotY + slotSize * totalRows + hotbarTopPadding;
 
@@ -69,14 +68,6 @@ public class SoulTurbineGeneratorContainer extends Container {
             ));
         }
 
-    }
-
-
-    @Override
-    public void updateProgressBar(int id, int data) {
-        super.updateProgressBar(id, data);
-
-        //todo Use this to... update the progress bar.
     }
 
     @Override
@@ -111,6 +102,7 @@ public class SoulTurbineGeneratorContainer extends Container {
 
             if (index < generatorSlots) {
                 // Is a generator slot; move to player inventory
+                // Normally, this is done in reverse order, prioritizing the hotbar. But, that's annoying.
                 if (!this.mergeItemStack(slotStack, firstPlayerInventorySlotIndex, lastPlayerHotBarSlot, false)) {
                     return null;
                 }
