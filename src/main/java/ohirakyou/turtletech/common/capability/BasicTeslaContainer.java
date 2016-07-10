@@ -352,25 +352,19 @@ public class BasicTeslaContainer implements ITeslaConsumer, ITeslaProducer, ITes
 
     /**
      * Distributes power first from the excess power this tick, followed by the buffer.
-     * <p>
-     * If the capacity is 0,
      *
      * @param world
      * @param pos
      * @return
      */
     public long distributePowerFromBuffer (World world, BlockPos pos) {
+        if (getUsablePower() <= 0) {return 0;}
+
         long potentialOutput = Math.max(outputRate - outputThisTick, 0);
         final long possibleOutput = Math.min(potentialOutput, getUsablePower());
 
         final long spentPower = distributePowerEvenlyToAllFaces(world, pos, possibleOutput);
         takePower(spentPower);
-
-        /*TurtleTech.logger.info(
-            "potentialOutput: " + potentialOutput +
-                    ", possibleOutput: " + possibleOutput +
-                    ", spentPower: " + spentPower
-        );*/
 
         return spentPower;
     }

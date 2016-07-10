@@ -17,7 +17,8 @@ import javax.annotation.Nullable;
 
 public class SoulTurbineGeneratorTileEntity extends TileEntityPoweredMachine {
 
-    private static final long ENERGY_IO = 100L;
+    /** Energy generated freely when on top of soul sand in the nether */
+    private static final long ENERGY_TRICKLE = 1;
 
     private static final int INPUT_SLOT_INDEX = 0;
     private static final int OUTPUT_SLOT_INDEX = 1;
@@ -30,7 +31,7 @@ public class SoulTurbineGeneratorTileEntity extends TileEntityPoweredMachine {
 
     public SoulTurbineGeneratorTileEntity() {
         super(SoulTurbineGeneratorTileEntity.class.getSimpleName());
-        becomePureEnergyGenerator(ENERGY_IO);
+        becomePureEnergyGenerator();
     }
 
     @Override
@@ -39,17 +40,24 @@ public class SoulTurbineGeneratorTileEntity extends TileEntityPoweredMachine {
 
         int targetConversionTicks = getItemConversionTicks(stackBeingConverted);
 
-        // Update progress for both the server and client
+        // Update conversion progress for both the server and client
         if (stackBeingConverted != null && currentConversionTicks < targetConversionTicks) {
             currentConversionTicks = Math.min(currentConversionTicks + 1, targetConversionTicks);
         }
 
         if (isServer()) {
-            // Generate power during conversion
+            // Generate energy during conversion
             if (currentConversionTicks > 0 && stackBeingConverted != null) {
                 generateEnergy(getItemEnergyRate(stackBeingConverted));
-                distributeEnergyFromBuffer();
             }
+
+            // Generate energy when on soul sand in the nether
+            if (isNether() && getDownBlock() == Blocks.SOUL_SAND) {
+                generateEnergy(ENERGY_TRICKLE);
+            }
+
+            // Distribute energy generated this tick
+            distributeEnergyFromBuffer();
 
             // Finish conversion
             if (currentConversionTicks >= targetConversionTicks) {
@@ -79,7 +87,7 @@ public class SoulTurbineGeneratorTileEntity extends TileEntityPoweredMachine {
                     }
                 }
 
-                // If a conversion was actually finished or started, sync
+                // If a conversion was actually finished or started, sync the client
                 if (needsSync) {
                     this.sync();
                 }

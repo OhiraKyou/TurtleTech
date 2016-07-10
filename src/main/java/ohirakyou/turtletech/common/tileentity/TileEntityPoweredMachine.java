@@ -42,16 +42,27 @@ public abstract class TileEntityPoweredMachine extends TileEntityMachine {
 
     // Energy
 
+
     /**
-     * Initializes fields necessary to make a generator that produces, but does not store, energy.
+     * Initializes fields for a bufferless generator with an effectively unlimited energy IO.
+     * <p>
+     * This is for generators that base energy output on variable factors, such as fuel or environmental conditions.
+     */
+    protected void becomePureEnergyGenerator() {
+        setEnergyIORate(Long.MAX_VALUE);
+        isEnergyProducer = true;
+    }
+
+    /**
+     * Initializes fields for a generator that produces, but does not store, energy.
      * @param energyIORate  the rate at which energy is generated and distributed
      */
-    public void becomePureEnergyGenerator(long energyIORate) {
+    protected void becomePureEnergyGenerator(long energyIORate) {
         setEnergyIORate(energyIORate);
         isEnergyProducer = true;
     }
 
-    public void becomeBufferedEnergyConsumer(long capacity, long inputRate, long consumptionRate) {
+    protected void becomeBufferedEnergyConsumer(long capacity, long inputRate, long consumptionRate) {
         setEnergyCapacity(capacity);
         setEnergyIORate(inputRate, consumptionRate);
         isEnergyConsumer = true;
@@ -68,6 +79,11 @@ public abstract class TileEntityPoweredMachine extends TileEntityMachine {
 
     public long getEnergy() {
         return teslaContainer.getStoredPower();
+    }
+
+    /** Gets sum of energy buffer and excess energy generated this tick. */
+    public long getUsableEnergy() {
+        return teslaContainer.getUsablePower();
     }
 
     public void setEnergy(long energy) {

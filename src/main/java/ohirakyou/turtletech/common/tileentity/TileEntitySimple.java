@@ -1,5 +1,6 @@
 package ohirakyou.turtletech.common.tileentity;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -9,7 +10,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import ohirakyou.turtletech.TurtleTech;
+import net.minecraft.world.WorldProviderHell;
 
 
 public abstract class TileEntitySimple extends TileEntity implements ITickable {
@@ -165,6 +166,26 @@ public abstract class TileEntitySimple extends TileEntity implements ITickable {
      */
     public boolean isClient(){
         return this.getWorld().isRemote;
+    }
+
+    public boolean isNether() {
+        return this.getWorld().provider instanceof WorldProviderHell;
+    }
+
+    public IBlockState getDownState() {
+        return getWorld().getBlockState(getPos().down());
+    }
+
+    public Block getDownBlock() {
+        return getDownState().getBlock();
+    }
+
+    public IBlockState getUpState() {
+        return getWorld().getBlockState(getPos().up());
+    }
+
+    public Block getUpBlock() {
+        return getUpState().getBlock();
     }
 
 }
