@@ -11,8 +11,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.INBTSerializable;
-import ohirakyou.turtletech.TurtleTech;
-import org.omg.IOP.IOR;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,15 +53,12 @@ public class BasicTeslaContainer implements ITeslaConsumer, ITeslaProducer, ITes
      */
     private long excessPowerThisTick;
 
-    /**
-     * Default constructor. Sets capacity to 5000 and transfer rate to 50. This constructor
-     * will not set the amount of stored power. These values are arbitrary and should not be
-     * taken as a base line for balancing.
-     */
-    public BasicTeslaContainer() {
-        this(5000, 50, 50);
+    public long getExcessPowerThisTick() {
+        return excessPowerThisTick;
     }
 
+
+    public BasicTeslaContainer() {}
 
     /**
      * Most useful for creating a pure generator (one with no buffer).

@@ -44,11 +44,14 @@ tile.turtletech:cast_iron_casing.name=Cast Iron Casing
 tile.turtletech:cast_iron_tread.name=Cast Iron Tread
 tile.turtletech:cast_iron_tread.tooltip=Increases movement speed
 
-# MACHINES
+# TURRETS
 tile.turtletech:precision_laser_turret.name=Precision Laser Turret
+
 item.turtletech:turret_extender.name=Turret Extender
 item.turtletech:turret_extender.tooltip=Extends adjacent turrets when powered
 tile.turtletech:turret_extender.name=Turret Extender
+
+# MACHINES
 tile.turtletech:foundry.name=Foundry
 tile.turtletech:foundry.tooltip=Casts molten substances into ingots
 tile.turtletech:crucible.name=Crucible
