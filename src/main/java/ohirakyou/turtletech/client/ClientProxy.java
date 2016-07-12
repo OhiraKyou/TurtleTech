@@ -8,11 +8,14 @@ import ohirakyou.turtletech.client.sound.ModSounds;
 import ohirakyou.turtletech.common.block.ModBlocks;
 import ohirakyou.turtletech.common.CommonProxy;
 import ohirakyou.turtletech.common.item.ModItems;
+import ohirakyou.turtletech.config.ModConfig;
 
 public class ClientProxy extends CommonProxy {
     @Override
     public void preInit(FMLPreInitializationEvent event) {
         super.preInit(event);
+        ModConfig.initClient(event.getSuggestedConfigurationFile());
+
         ModRenderers.init();
         ModSounds.init();
     }

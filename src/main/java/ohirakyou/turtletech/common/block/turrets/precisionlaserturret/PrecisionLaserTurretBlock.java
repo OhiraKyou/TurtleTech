@@ -15,10 +15,10 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
-import ohirakyou.turtletech.TurtleTech;
 import ohirakyou.turtletech.common.block.turrets.BlockTurret;
 
 import net.darkhax.tesla.capability.TeslaCapabilities;
+import ohirakyou.turtletech.common.material.Materials;
 import ohirakyou.turtletech.util.ChatUtils;
 
 import javax.annotation.Nullable;
@@ -27,11 +27,14 @@ import java.util.List;
 public class PrecisionLaserTurretBlock extends BlockTurret {
     private final AxisAlignedBB bounds = new AxisAlignedBB(0, 0, 0, 1f, 0.1f, 1f);
 
+    public PrecisionLaserTurretBlock() {
+        super(Materials.cast_iron);
+    }
+
     @Override
     public PrecisionLaserTileEntity createNewTileEntity(World world, int meta) {
         return new PrecisionLaserTileEntity();
     }
-
 
     public boolean onBlockActivated(
             World worldIn, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand,

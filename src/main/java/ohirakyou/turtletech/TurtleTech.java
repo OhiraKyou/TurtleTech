@@ -1,8 +1,5 @@
 package ohirakyou.turtletech;
 
-import net.minecraftforge.common.config.ConfigCategory;
-import net.minecraftforge.common.config.Configuration;
-import net.minecraftforge.common.config.Property;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -10,10 +7,8 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.SidedProxy;
 import ohirakyou.turtletech.common.CommonProxy;
-import ohirakyou.turtletech.common.item.ItemGroups;
 import org.apache.logging.log4j.Logger;
 
-import ohirakyou.turtletech.client.TurtleTechCreativeTab;
 import ohirakyou.turtletech.data.DataModInfo;
 import ohirakyou.turtletech.data.DataMods;
 import ohirakyou.turtletech.interop.IntegrationElectricAdvantage;
@@ -51,12 +46,6 @@ public class TurtleTech {
     public void preInit(FMLPreInitializationEvent event) {
         if (instance == null) { instance = this; }
         logger = event.getModLog();
-        //creativeTab = new TurtleTechCreativeTab();
-        ItemGroups.init();
-
-        // load config
-        Configuration config = new Configuration(event.getSuggestedConfigurationFile());
-        config.load();
 
         proxy.preInit(event);
     }

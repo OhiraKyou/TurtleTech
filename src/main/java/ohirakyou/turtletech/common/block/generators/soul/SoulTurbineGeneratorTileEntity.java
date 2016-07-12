@@ -11,14 +11,17 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import ohirakyou.turtletech.common.tileentity.TileEntityPoweredMachine;
+import ohirakyou.turtletech.config.ConfigLongs;
+import ohirakyou.turtletech.util.InventoryUtils;
 import ohirakyou.turtletech.util.MathUtils;
 
 import javax.annotation.Nullable;
+import java.util.List;
 
 public class SoulTurbineGeneratorTileEntity extends TileEntityPoweredMachine {
 
     /** Energy generated freely when on top of soul sand in the nether */
-    private static final long ENERGY_TRICKLE = 1;
+    private static long energyTrickle;
 
     private static final int INPUT_SLOT_INDEX = 0;
     private static final int OUTPUT_SLOT_INDEX = 1;
@@ -32,6 +35,8 @@ public class SoulTurbineGeneratorTileEntity extends TileEntityPoweredMachine {
     public SoulTurbineGeneratorTileEntity() {
         super(SoulTurbineGeneratorTileEntity.class.getSimpleName());
         becomePureEnergyGenerator();
+
+        energyTrickle = 1L;// ConfigLongs.ENERGY_TRICKLE_SOUL_TURBINE_GENERATOR.value;
     }
 
     @Override
@@ -53,7 +58,7 @@ public class SoulTurbineGeneratorTileEntity extends TileEntityPoweredMachine {
 
             // Generate energy when on soul sand in the nether
             if (isNether() && getDownBlock() == Blocks.SOUL_SAND) {
-                generateEnergy(ENERGY_TRICKLE);
+                generateEnergy(energyTrickle);
             }
 
             // Distribute energy generated this tick
@@ -167,12 +172,15 @@ public class SoulTurbineGeneratorTileEntity extends TileEntityPoweredMachine {
         return 0;
     }
 
+    public List<ItemStack> getDrops() {
+        return InventoryUtils.dropItemHandlerContents(inventory, getWorld().rand);
+    }
+
 
     @Override
     public boolean isPowered() {
         return currentConversionTicks > 0;
     }
-
 
 
     // Data management

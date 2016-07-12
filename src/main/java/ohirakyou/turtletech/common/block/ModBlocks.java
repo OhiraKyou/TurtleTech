@@ -41,7 +41,7 @@ public class ModBlocks {
     public static Block turret_extender;
     public static FoundryBlock foundry;
     public static SpeedBlock cast_iron_tread;
-    public static CastIronCasingBlock cast_iron_casing;
+    public static BlockBase cast_iron_casing;
 
     public static CreativeGeneratorBlock creative_generator;
     public static RedstoneReflexGeneratorBlock redstone_reflex_generator;
@@ -55,12 +55,16 @@ public class ModBlocks {
 
 
     public static void init() {
-        // Custom blocks
+        // Blocks
+        cast_iron_tread = addBlock(new SpeedBlock(Materials.cast_iron, 1.25f), "cast_iron_tread");
+        cast_iron_casing = addBlock(new BlockBase(Materials.cast_iron), "cast_iron_casing");
+
+        // Machines
+        foundry = addBlock(new FoundryBlock(), "foundry");
+
+        // Turrets
         precision_laser_turret = addBlock(new PrecisionLaserTurretBlock(), "precision_laser_turret");
         turret_extender = addBlock(new TurretExtenderBlock(), "turret_extender");
-        foundry = addBlock(new FoundryBlock(), "foundry");
-        cast_iron_tread = addBlock(new SpeedBlock(Materials.cast_iron, 1.25f), "cast_iron_tread");
-        cast_iron_casing = addBlock(new CastIronCasingBlock(), "cast_iron_casing");
 
         // Generators
         creative_generator = addBlock(new CreativeGeneratorBlock(), "creative_generator");
@@ -146,41 +150,4 @@ public class ModBlocks {
             Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(item, meta, modelLocation);
         }
     }
-
-
-
-
-    /**
-     * Registers a Block with the default ItemBlock class.
-     *
-     * @param block  The Block instance
-     * @param <BLOCK>  The Block type
-     * @return The Block instance
-     */
-    /*
-    protected static <BLOCK extends Block> BLOCK registerBlock(BLOCK block) {
-        return registerBlock(block, ItemBlock::new);
-    }*/
-
-    /**
-     * Registers a Block with a custom ItemBlock class.
-     *
-     * @param <BLOCK>  The Block type
-     * @param block  The Block instance
-     * @param itemFactory  A function that creates the ItemBlock instance, or null if no ItemBlock should be created
-     * @return The Block instance
-     */
-    /*
-    protected static <BLOCK extends Block> BLOCK registerBlock(BLOCK block, @Nullable Function<BLOCK, ItemBlock> itemFactory) {
-        GameRegistry.register(block);
-
-        if (itemFactory != null) {
-            final ItemBlock itemBlock = itemFactory.apply(block);
-
-            GameRegistry.register(itemBlock.setRegistryName(block.getRegistryName()));
-        }
-
-        blocks.add(block);
-        return block;
-    }*/
 }

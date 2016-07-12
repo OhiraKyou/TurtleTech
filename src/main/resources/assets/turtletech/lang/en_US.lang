@@ -1,6 +1,8 @@
 itemGroup.turtletech=Turtle Tech
 itemGroup.turtletech.blocks=Turtle Tech
 
+turtletech:misc.morePrompt=§8<Hold Shift>
+
 # MISCELLANEOUS CAST IRON  ITEMS
 item.turtletech:cast_iron_arrow.name=Cast Iron Arrow
 item.turtletech:cast_iron_axe.name=Cast Iron Axe
@@ -63,6 +65,7 @@ tile.turtletech:redstone_reflex_generator.name=Redstone Reflex Generator
 tile.turtletech:redstone_reflex_generator.tooltip=Generates power from redstone pulses
 tile.turtletech:soul_turbine_generator.name=Soul Turbine Generator
 tile.turtletech:soul_turbine_generator.tooltip=Generates power from souls
+tile.turtletech:soul_turbine_generator.more=Generates energy from converted items or while on soul sand in the nether.
 
 # LIQUIDS
 fluid.turtletech.cast_iron=Molten Cast Iron

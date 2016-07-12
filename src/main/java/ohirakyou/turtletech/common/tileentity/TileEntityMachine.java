@@ -39,7 +39,7 @@ public abstract class TileEntityMachine extends TileEntitySimple implements ITic
     public void setActiveState(boolean active) {
         IBlockState oldState = getWorld().getBlockState(getPos());
         if(oldState.getBlock() instanceof BlockMachine
-                && oldState.getValue(BlockMachine.ACTIVE) != active ){
+                && (Boolean)oldState.getValue(BlockMachine.ACTIVE) != active ){
             final TileEntity save = this;
             final World w = getWorld();
             final BlockPos pos = this.getPos();

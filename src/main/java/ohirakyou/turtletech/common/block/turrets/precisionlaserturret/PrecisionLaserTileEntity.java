@@ -5,7 +5,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
@@ -14,13 +13,12 @@ import net.minecraft.util.math.*;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import ohirakyou.turtletech.TurtleTech;
 import ohirakyou.turtletech.client.sound.ModSounds;
 import ohirakyou.turtletech.common.tileentity.TileEntityTurret;
+import ohirakyou.turtletech.config.ConfigLongs;
 import ohirakyou.turtletech.util.MathUtils;
 import ohirakyou.turtletech.util.SimpleRotation;
 
-import javax.vecmath.Vector2f;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,9 +29,7 @@ public class PrecisionLaserTileEntity extends TileEntityTurret {
     public static final int LASER_LIFE = 7;
     public static final float LASER_DAMAGE = 7f;
 
-    public final static long ENERGY_PER_SHOT = 250L;
-    public final static long ENERGY_CAPACITY = ENERGY_PER_SHOT * 2L;
-    public final static long ENERGY_INPUT_PER_TICK = ENERGY_PER_SHOT / LASER_COOLDOWN_TIME * 2L;
+    public static long energyPerShot, energyCapacity, energyInputPerTick;
 
 
     //public Entity target;
@@ -62,7 +58,7 @@ public class PrecisionLaserTileEntity extends TileEntityTurret {
     public PrecisionLaserTileEntity() {
         super(PrecisionLaserTileEntity.class.getSimpleName(), 30f, 15f, 32f);
 
-        becomeBufferedEnergyConsumer(ENERGY_CAPACITY, ENERGY_INPUT_PER_TICK, ENERGY_PER_SHOT);
+        loadConfig();
 
         shotCooldownDuration = LASER_COOLDOWN_TIME;
         shotChargeDuration = LASER_CHARGE_TIME;
@@ -74,6 +70,14 @@ public class PrecisionLaserTileEntity extends TileEntityTurret {
         previousPitch = POWERED_DOWN_PITCH;
         currentPitch = POWERED_DOWN_PITCH;
         targetPitch = POWERED_DOWN_PITCH;
+    }
+
+    private void loadConfig() {
+        energyPerShot = 250L;// ConfigLongs.ENERGY_USE_PRECISION_LASER_TURRET.value;
+        energyCapacity = energyPerShot * 2L;
+        energyInputPerTick = energyPerShot / LASER_COOLDOWN_TIME * 2L;
+
+        becomeBufferedEnergyConsumer(energyCapacity, energyInputPerTick, energyPerShot);
     }
 
     @Override
@@ -123,13 +127,6 @@ public class PrecisionLaserTileEntity extends TileEntityTurret {
 
             previouslyActive = isActive();
         }
-
-        /*
-        TurtleTech.logger.info(
-                (isClient() ? "(Client) " : "(Server)") + "Active: " + (isActive() ? "Y" : "N") + ", Previously active: " +
-                        (previouslyActive ? "Y" : "N") + ", Energy: " + getEnergy()
-        );
-        */
     }
 
     @Override
@@ -252,7 +249,7 @@ public class PrecisionLaserTileEntity extends TileEntityTurret {
                     setTarget(null);
                 }
 
-                spendEnergy(ENERGY_PER_SHOT);
+                spendEnergy(energyPerShot);
 
                 currentLaserLife = LASER_LIFE;
 
@@ -349,7 +346,7 @@ public class PrecisionLaserTileEntity extends TileEntityTurret {
 
     @Override
     public boolean isPowered(){
-        return hasEnergy(ENERGY_PER_SHOT);
+        return hasEnergy(energyPerShot);
     }
 
     @Override
