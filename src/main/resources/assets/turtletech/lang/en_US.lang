@@ -62,9 +62,9 @@ tile.turtletech:crucible.tooltip=Melts substances
 # GENERATORS
 tile.turtletech:creative_generator.name=Creative Generator
 tile.turtletech:redstone_reflex_generator.name=Redstone Reflex Generator
-tile.turtletech:redstone_reflex_generator.tooltip=Generates power from redstone pulses
+tile.turtletech:redstone_reflex_generator.tooltip=Generates energy from redstone pulses
 tile.turtletech:soul_turbine_generator.name=Soul Turbine Generator
-tile.turtletech:soul_turbine_generator.tooltip=Generates power from souls
+tile.turtletech:soul_turbine_generator.tooltip=Generates energy from souls
 tile.turtletech:soul_turbine_generator.more=Generates energy from converted items or while on soul sand in the nether.
 
 # LIQUIDS
