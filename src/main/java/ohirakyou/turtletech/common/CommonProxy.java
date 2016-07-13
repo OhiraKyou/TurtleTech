@@ -5,6 +5,7 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
 import ohirakyou.turtletech.client.gui.ModGUI;
+import ohirakyou.turtletech.client.sound.ModSounds;
 import ohirakyou.turtletech.common.block.ModBlocks;
 import ohirakyou.turtletech.common.item.ItemGroups;
 import ohirakyou.turtletech.common.tileentity.ModTileEntities;
@@ -15,7 +16,9 @@ import ohirakyou.turtletech.config.ModConfig;
 
 public class CommonProxy {
     public void preInit(FMLPreInitializationEvent event) {
+        ModConfig.init(event);
         ItemGroups.init();
+        ModSounds.init();
 
         Materials.init();  // prerequisite for blocks and items
 
@@ -32,6 +35,5 @@ public class CommonProxy {
         ModGUI.init();
     }
 
-    public void postInit(FMLPostInitializationEvent event) {
-    }
+    public void postInit(FMLPostInitializationEvent event) {}
 }

@@ -36,7 +36,7 @@ public class SoulTurbineGeneratorTileEntity extends TileEntityPoweredMachine {
         super(SoulTurbineGeneratorTileEntity.class.getSimpleName());
         becomePureEnergyGenerator();
 
-        energyTrickle = 1L;// ConfigLongs.ENERGY_TRICKLE_SOUL_TURBINE_GENERATOR.value;
+        energyTrickle = ConfigLongs.ENERGY_TRICKLE_SOUL_TURBINE_GENERATOR.value;
     }
 
     @Override

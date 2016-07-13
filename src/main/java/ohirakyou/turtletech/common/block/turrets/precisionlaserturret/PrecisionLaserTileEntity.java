@@ -73,7 +73,7 @@ public class PrecisionLaserTileEntity extends TileEntityTurret {
     }
 
     private void loadConfig() {
-        energyPerShot = 250L;// ConfigLongs.ENERGY_USE_PRECISION_LASER_TURRET.value;
+        energyPerShot = ConfigLongs.ENERGY_USE_PRECISION_LASER_TURRET.value;
         energyCapacity = energyPerShot * 2L;
         energyInputPerTick = energyPerShot / LASER_COOLDOWN_TIME * 2L;
 
