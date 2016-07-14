@@ -20,18 +20,18 @@ public class ModConfigGUI extends GuiConfig {
     }
 
     private static List<IConfigElement> getConfigElements() {
-        List<IConfigElement> list = new ArrayList<>();
+        List<IConfigElement> categoryList = new ArrayList<>();
         String prefix = GUIUtils.getModPrefix() + "config.";
 
         for (ConfigCategories category : ConfigCategories.values()) {
             ConfigCategory configCategory = ModConfig.getConfig().getCategory(category.key);
 
             if (configCategory.values().size() > 0) {
-                list.add(new ConfigElement(configCategory.setLanguageKey(prefix + category.key)));
+                categoryList.add(new ConfigElement(configCategory.setLanguageKey(prefix + category.key)));
             }
         }
 
-        return list;
+        return categoryList;
     }
 
 }

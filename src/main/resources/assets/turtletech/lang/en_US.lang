@@ -5,13 +5,7 @@ turtletech:misc.morePrompt=§8<Hold Shift>
 
 # CONFIG
 turtletech:config.main=Config
-
 turtletech:config.gui=GUI
-turtletech:config.showTooltips=Show tooltips
-turtletech:config.showPrimaryTooltips=Show primary tooltips
-turtletech:config.showHiddenTooltips=Show hidden tooltips
-turtletech:config.showHiddenTooltipPrompt=Show hidden tooltip prompt
-
 turtletech:config.items=Items
 turtletech:config.blocks=Blocks
 turtletech:config.crafting=Crafting

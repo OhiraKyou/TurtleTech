@@ -3,9 +3,9 @@ package ohirakyou.turtletech.config.values;
 import ohirakyou.turtletech.config.ConfigCategories;
 
 public enum ConfigLongs {
-    ENERGY_USE_PRECISION_LASER_TURRET(ConfigCategories.ENERGY, "precisionLaserTurretShot", 250L,
+    ENERGY_USE_PRECISION_LASER_TURRET(ConfigCategories.ENERGY, "Precision laser turret shot", 250L,
             "Energy per laser shot", true),
-    ENERGY_TRICKLE_SOUL_TURBINE_GENERATOR(ConfigCategories.ENERGY, "soulTurbineGeneratorTrickle", 1L,
+    ENERGY_TRICKLE_SOUL_TURBINE_GENERATOR(ConfigCategories.ENERGY, "Soul turbine generator trickle", 1L,
             "Energy per tick generated while on soul sand in the nether", true)
     ;
 

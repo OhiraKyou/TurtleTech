@@ -3,10 +3,10 @@ package ohirakyou.turtletech.config.values;
 import ohirakyou.turtletech.config.ConfigCategories;
 
 public enum ConfigBooleans {
-    SHOW_TOOLTIPS(ConfigCategories.GUI, "showTooltips", true, "Master visibility of all tooltips"),
-    SHOW_TOOLTIPS_PRIMARY(ConfigCategories.GUI, "showPrimaryTooltips", true, "Visibility of tooltips that are otherwise always shown"),
-    SHOW_TOOLTIPS_HIDDEN(ConfigCategories.GUI, "showHiddenTooltips", true, "Visibility of tooltips that are hidden behind a key prompt"),
-    SHOW_TOOLTIPS_HIDDEN_PROMPT(ConfigCategories.GUI, "showHiddenTooltipPrompt", true, "Visibility of the key prompt for hidden tooltips")
+    SHOW_TOOLTIPS(ConfigCategories.GUI, "Show tooltips", true, "Master visibility of all tooltips"),
+    SHOW_TOOLTIPS_PRIMARY(ConfigCategories.GUI, "Show primary tooltips", true, "Visibility of tooltips that are otherwise always shown"),
+    SHOW_TOOLTIPS_HIDDEN(ConfigCategories.GUI, "Show hidden tooltips", true, "Visibility of tooltips that are hidden behind a key prompt"),
+    SHOW_TOOLTIPS_HIDDEN_PROMPT(ConfigCategories.GUI, "Show hidden tooltip prompt", true, "Visibility of the key prompt for hidden tooltips")
     ;
 
     public final String key;
