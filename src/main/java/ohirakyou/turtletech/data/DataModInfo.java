@@ -8,5 +8,7 @@ public final class DataModInfo {
     public static final String MOD_VERSION = "@MOD_VERSION@";
     public static final String FORGE_VERSION = "@FORGE_VERSION@";
 
-    // boolean developmentEnvironment = (Boolean)Launch.blackboard.get("fml.deobfuscatedEnvironment");
+    public static final String GUI_FACTORY = "ohirakyou.turtletech.config.gui.GUIFactory";
+
+    // boolean isDevelopmentEnvironment = (Boolean)Launch.blackboard.get("fml.deobfuscatedEnvironment");
 }

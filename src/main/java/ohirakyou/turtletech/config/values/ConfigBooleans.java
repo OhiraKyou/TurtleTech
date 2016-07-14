@@ -1,4 +1,6 @@
-package ohirakyou.turtletech.config;
+package ohirakyou.turtletech.config.values;
+
+import ohirakyou.turtletech.config.ConfigCategories;
 
 public enum ConfigBooleans {
     SHOW_TOOLTIPS(ConfigCategories.GUI, "showTooltips", true, "Master visibility of all tooltips"),

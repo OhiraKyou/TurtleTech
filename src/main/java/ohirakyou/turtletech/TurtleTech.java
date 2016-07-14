@@ -21,6 +21,8 @@ import ohirakyou.turtletech.interop.ModIntegration;
     name= DataModInfo.MOD_NAME,
     version = DataModInfo.MOD_VERSION,
 
+    guiFactory = DataModInfo.GUI_FACTORY,
+
     dependencies =
         "required-after:" + DataMods.FORGE + "@["+ DataModInfo.FORGE_VERSION + ",)" +
         ";required-after:" + DataMods.BASE_METALS +

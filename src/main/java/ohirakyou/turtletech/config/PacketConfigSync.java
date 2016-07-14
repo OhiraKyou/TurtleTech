@@ -4,6 +4,8 @@ import io.netty.buffer.ByteBuf;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import ohirakyou.turtletech.config.values.ConfigBooleans;
+import ohirakyou.turtletech.config.values.ConfigLongs;
 
 public class PacketConfigSync implements IMessage, IMessageHandler<PacketConfigSync, IMessage> {
 

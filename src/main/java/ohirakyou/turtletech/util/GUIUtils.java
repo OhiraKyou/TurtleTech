@@ -2,7 +2,7 @@ package ohirakyou.turtletech.util;
 
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
-import ohirakyou.turtletech.config.ConfigBooleans;
+import ohirakyou.turtletech.config.values.ConfigBooleans;
 import ohirakyou.turtletech.data.DataModInfo;
 
 import java.util.List;
@@ -45,15 +45,15 @@ public abstract class GUIUtils {
         }
     }
 
+    public static String getModPrefix() {return DataModInfo.MOD_ID + ":";}
+
     /**
      * Localizes a string with this mod's prefix automatically applied.
      *
      * @param key  the value after ':' in modname:key
      * @return the localized string associated with this mod and the given key
      */
-    public static String localizeForMod(String key) {
-        return localize(DataModInfo.MOD_ID + ":" + key);
-    }
+    public static String localizeForMod(String key) {return localize(getModPrefix() + key);}
 
 
     /**
@@ -62,7 +62,5 @@ public abstract class GUIUtils {
      * @param key  the entire key, including any mod prefixes
      * @return the localized string associated with the specified key
      */
-    public static String localize(String key) {
-        return I18n.format(key);
-    }
+    public static String localize(String key) {return I18n.format(key);}
 }

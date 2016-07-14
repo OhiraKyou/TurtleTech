@@ -12,7 +12,7 @@ public abstract class ModGUI {
     public static void init(){
         ModBlocks.soul_turbine_generator.guiId = DataGuiIDs.SOUL_TURBINE_GENERATOR;
 
-        NetworkRegistry.INSTANCE.registerGuiHandler(TurtleTech.instance, new GuiHandler());
+        NetworkRegistry.INSTANCE.registerGuiHandler(TurtleTech.instance, new GUIHandler());
     }
 
 }

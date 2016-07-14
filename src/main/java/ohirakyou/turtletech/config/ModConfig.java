@@ -8,6 +8,8 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.relauncher.Side;
+import ohirakyou.turtletech.config.values.ConfigBooleans;
+import ohirakyou.turtletech.config.values.ConfigLongs;
 import ohirakyou.turtletech.data.DataModInfo;
 import ohirakyou.turtletech.network.PacketHandler;
 
@@ -20,6 +22,14 @@ public class ModConfig {
     public static void init(FMLPreInitializationEvent event) {
         PacketHandler.CHANNEL.registerMessage(PacketConfigSync.class, PacketConfigSync.class, PacketHandler.nextID(), Side.CLIENT);
         instance = new ModConfig(event.getSuggestedConfigurationFile(), event.getSide().isServer());
+    }
+
+    public static Configuration getConfig() {
+        return instance.config;
+    }
+
+    public static File getConfigFile() {
+        return getConfig().getConfigFile();
     }
 
 

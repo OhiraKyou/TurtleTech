@@ -3,6 +3,20 @@ itemGroup.turtletech.blocks=Turtle Tech
 
 turtletech:misc.morePrompt=§8<Hold Shift>
 
+# CONFIG
+turtletech:config.main=Config
+
+turtletech:config.gui=GUI
+turtletech:config.showTooltips=Show tooltips
+turtletech:config.showPrimaryTooltips=Show primary tooltips
+turtletech:config.showHiddenTooltips=Show hidden tooltips
+turtletech:config.showHiddenTooltipPrompt=Show hidden tooltip prompt
+
+turtletech:config.items=Items
+turtletech:config.blocks=Blocks
+turtletech:config.crafting=Crafting
+turtletech:config.energy=Energy
+
 # MISCELLANEOUS CAST IRON  ITEMS
 item.turtletech:cast_iron_arrow.name=Cast Iron Arrow
 item.turtletech:cast_iron_axe.name=Cast Iron Axe

@@ -11,7 +11,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import ohirakyou.turtletech.common.tileentity.TileEntityPoweredMachine;
-import ohirakyou.turtletech.config.ConfigLongs;
+import ohirakyou.turtletech.config.values.ConfigLongs;
 import ohirakyou.turtletech.util.InventoryUtils;
 import ohirakyou.turtletech.util.MathUtils;
 

@@ -15,7 +15,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import ohirakyou.turtletech.client.sound.ModSounds;
 import ohirakyou.turtletech.common.tileentity.TileEntityTurret;
-import ohirakyou.turtletech.config.ConfigLongs;
+import ohirakyou.turtletech.config.values.ConfigLongs;
 import ohirakyou.turtletech.util.MathUtils;
 import ohirakyou.turtletech.util.SimpleRotation;
 

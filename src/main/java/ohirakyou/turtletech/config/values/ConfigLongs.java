@@ -1,4 +1,6 @@
-package ohirakyou.turtletech.config;
+package ohirakyou.turtletech.config.values;
+
+import ohirakyou.turtletech.config.ConfigCategories;
 
 public enum ConfigLongs {
     ENERGY_USE_PRECISION_LASER_TURRET(ConfigCategories.ENERGY, "precisionLaserTurretShot", 250L,
