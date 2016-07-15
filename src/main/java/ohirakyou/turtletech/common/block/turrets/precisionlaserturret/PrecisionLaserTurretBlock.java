@@ -15,6 +15,7 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
+import ohirakyou.turtletech.TurtleTech;
 import ohirakyou.turtletech.common.block.turrets.BlockTurret;
 
 import net.darkhax.tesla.capability.TeslaCapabilities;
@@ -25,7 +26,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 public class PrecisionLaserTurretBlock extends BlockTurret {
-    private final AxisAlignedBB bounds = new AxisAlignedBB(0, 0, 0, 1f, 0.1f, 1f);
+    private final AxisAlignedBB headBounds = new AxisAlignedBB(0.25D, 0.25D, 0.25D, 0.75D, 0.75D, 0.75D);
 
     public PrecisionLaserTurretBlock() {
         super(Materials.cast_iron);
@@ -55,15 +56,7 @@ public class PrecisionLaserTurretBlock extends BlockTurret {
                 )));
             }
         }
-
         return true;
-    }
-
-
-
-    @Override
-    public AxisAlignedBB getBoundingBox(final IBlockState bs, final IBlockAccess world, final BlockPos coord) {
-        return bounds;
     }
 
     @Override
@@ -71,6 +64,6 @@ public class PrecisionLaserTurretBlock extends BlockTurret {
                                       final AxisAlignedBB box, final List<AxisAlignedBB> collisionBoxList,
                                       final Entity entity) {
 
-        super.addCollisionBoxToList(coord, box, collisionBoxList, bounds);
+        addCollisionBoxToList(coord, box, collisionBoxList, headBounds);
     }
 }

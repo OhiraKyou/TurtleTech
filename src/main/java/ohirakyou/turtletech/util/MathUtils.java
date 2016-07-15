@@ -1,29 +1,25 @@
 package ohirakyou.turtletech.util;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
 
 /**
  * Contains custom math utility functions
  */
-public class MathUtils {
-    /** A wrapper for using min and max at the same time. */
-    public static float clamp(float val, float min, float max) {
-        return Math.max(min, Math.min(max, val));
-    }
+public abstract class MathUtils {
+    public static final float RADIANS_TO_DEGREES = (float)(180 / Math.PI);
+    public static final float DEGREES_TO_RADIANS = (float)(Math.PI / 180);
 
     /** A wrapper for using min and max at the same time. */
-    public static int clamp(int val, int min, int max) {
-        return Math.max(min, Math.min(max, val));
-    }
+    public static float clamp(float val, float min, float max) {return Math.max(min, Math.min(max, val));}
+
+    /** A wrapper for using min and max at the same time. */
+    public static int clamp(int val, int min, int max) {return Math.max(min, Math.min(max, val));}
 
     /** Clamps value between negative and positive minMax. */
-    public static float clampSymmetrical(float value, float minMax) {
-        return Math.max(-minMax, Math.min(minMax, value));
-    }
+    public static float clampSymmetrical(float value, float minMax) {return Math.max(-minMax, Math.min(minMax, value));}
 
     /** CLamps value between 0 and 1 */
     public static float clamp01 (float value) {
@@ -37,44 +33,42 @@ public class MathUtils {
     }
 
     public static float wrapBetween(float value, float min, float max) {
-        // Expanded for readability: min + (max - min) % (max - min)
+        // Algorithm from http://stackoverflow.com/a/5852628/599884
 
-        // Tear open the fabric of mathematical space-time to create a pocket dimension in the number line
-        // where only the values between min and max exist.
-        final float range = max - min;
+        if (min > max) {
+            // Swap min and max
+            float temp = min;
+            min = max;
+            max = temp;
+        }
 
-        // Depending on where our value was when the rupture occurred, it may now be either safely within
-        // the new dimension or dangling from the left or right side of the dimension by an existential thread.
-        // Find its coordinate relative to min.
-        final float offsetFromMin = value - min;
+        float range = max - min;
+        if (range == 0) {return max;}
 
-        // Wind our value's existential thread around the number line pocket dimension until the end of
-        // its thread ends neatly within the dimension.
-        final float wrappedOffset = offsetFromMin % range;
-
-        // Transplant the pocket dimension, with our value now offset, into the number line proper
-        return min + wrappedOffset;
+        return (float) (value - range * Math.floor((value - min) / range));
     }
 
     public static double wrapBetween(double value, double min, double max) {
-        final double range = max - min;
-        final double offsetFromMin = value - min;
-        final double wrappedOffset = offsetFromMin % range;
+        // Algorithm from http://stackoverflow.com/a/5852628/599884
 
-        return min + wrappedOffset;
+        if (min > max) {
+            // Swap min and max
+            double temp = min;
+            min = max;
+            max = temp;
+        }
+
+        double range = max - min;
+        if (range == 0) {return max;}
+
+        return (value - range * Math.floor((value - min) / range));
     }
 
-    public static float wrapAngle180(float value){
-        return wrapBetween(value, -180f, 180f);
-    }
+    public static float wrapAngle180(float value){return wrapBetween(value, -180f, 180f);}
 
-    public static float wrapAngle360(float value){
-        return wrapBetween(value, 0, 360f);
-    }
+    public static float wrapAngle360(float value){return wrapBetween(value, 0, 360f);}
 
-    public static double wrapAngle360(double value){
-        return wrapBetween(value, 0, 360f);
-    }
+    public static double wrapAngle360(double value){return wrapBetween(value, 0, 360f);}
 
     /**
      * Linearly interpolates between two otherwise disparate values.
@@ -130,30 +124,33 @@ public class MathUtils {
         return Math.random() * (max-min) + min;
     }
 
-    public static BlockPos getUpPos(BlockPos start) {
-        return new BlockPos(start.getX(), start.getY() + 1, start.getZ());
+    public static Vec3d calculateDirection(float pitch, float yaw) {
+        double pitchRadians = Math.toRadians(pitch);
+        double yawRadians = Math.toRadians(yaw);
+
+        double sinPitch = Math.sin(pitchRadians);
+        double cosPitch = Math.cos(pitchRadians);
+        double sinYaw = Math.sin(yawRadians);
+        double cosYaw = Math.cos(yawRadians);
+
+        //return new Vec3d(-cosPitch * sinYaw, sinPitch, -cosPitch * cosYaw);
+        //return new Vec3d(-cosYaw * sinPitch, -cosPitch, sinYaw * sinPitch);
+        return new Vec3d(sinYaw * cosPitch, sinPitch, -cosYaw * cosPitch).normalize();
+        //return new Vec3d(Math.sin(pitch) * Math.sin(yaw), Math.cos(pitch), Math.sin(pitch) * Math.sin(yaw));
+
+        /*
+        return new Vec3d(
+                Math.sin(yaw),
+                Math.sin(pitch),
+                Math.cos(DEGREES_TO_RADIANS * yaw)
+        ).normalize();*/
     }
 
-    public static BlockPos getDownPos(BlockPos start) {
-        return new BlockPos(start.getX(), start.getY() - 1, start.getZ());
-    }
+    public static Vec3d calculateDirection(Vec3d origin, Entity target) {
+        Vec3d entityLocalCenter = new Vec3d(0, 0.5 * target.height, 0);
+        Vec3d targetPoint = target.getPositionVector().add(entityLocalCenter);
 
-    public static Vec3d followRayToSolidBlock(World w, Vec3d origin, Vec3d dir, double maxRange){
-        Vec3d max = origin.add(dir).addVector(maxRange * dir.xCoord, maxRange * dir.yCoord, maxRange * dir.zCoord);
-        RayTraceResult impact = w.rayTraceBlocks(origin, max, true, true, false);
-
-        if(impact != null && impact.typeOfHit == RayTraceResult.Type.BLOCK){
-            final Vec3d impactSite;
-            if(impact.hitVec != null){
-                impactSite = impact.hitVec;
-            } else {
-                BlockPos bp = impact.getBlockPos();
-                impactSite = new Vec3d(bp.getX(), bp.getY(), bp.getZ());
-            }
-            return impactSite;
-        } else {
-            return max;
-        }
+        return targetPoint.subtract(origin).normalize();
     }
 
     public static float getYawFromFacing(EnumFacing facing) {
@@ -181,5 +178,12 @@ public class MathUtils {
         float degreesRelativeToForward = deviationFromForward + degreesRelativeToForeign;
 
         return degreesRelativeToForward;
+    }
+
+    public static double distance(double x1,double y1,double z1,double x2,double y2,double z2){
+        double dx = x2-x1;
+        double dy = y2-y1;
+        double dz = z2-z1;
+        return MathHelper.sqrt_double(dx * dx + dy * dy + dz * dz);
     }
 }

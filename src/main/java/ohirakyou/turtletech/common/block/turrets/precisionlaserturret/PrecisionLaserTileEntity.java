@@ -18,6 +18,7 @@ import ohirakyou.turtletech.common.tileentity.TileEntityTurret;
 import ohirakyou.turtletech.config.values.ConfigLongs;
 import ohirakyou.turtletech.util.MathUtils;
 import ohirakyou.turtletech.util.SimpleRotation;
+import ohirakyou.turtletech.util.WorldUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,12 +32,14 @@ public class PrecisionLaserTileEntity extends TileEntityTurret {
 
     public static long energyPerShot, energyCapacity, energyInputPerTick;
 
-
-    //public Entity target;
     public float chargeLevel = 0;
 
     private boolean previouslyActive;
 
+
+    // Used both for rendering and initiating the client-side laser effect from updates
+    public float previousLaserLife;
+    public float currentLaserLife;
 
     // Rendering
     public static final float IDLE_TICK_DEGREES = 0.75f;
@@ -49,10 +52,9 @@ public class PrecisionLaserTileEntity extends TileEntityTurret {
     public float previousLaserRotation;
     public float currentLaserRotation;
 
-    public float previousLaserLife;
-    public float currentLaserLife;
-
     public double laserLength;
+
+    public EnumFacing attachmentFace;
 
 
     public PrecisionLaserTileEntity() {
@@ -84,15 +86,8 @@ public class PrecisionLaserTileEntity extends TileEntityTurret {
     public final void tickUpdate(boolean isServerWorld) {
         super.tickUpdate(isServerWorld);
 
-        previousLaserRotation = currentLaserRotation;
-        currentLaserRotation += LASER_ROTATION_PER_TICK;
-        if (previousLaserRotation > 360f) { previousLaserRotation -= 360f; }
-        if (currentLaserRotation > 360f) { currentLaserRotation -= 360f; }
-
         previousLaserLife = currentLaserLife;
         if (currentLaserLife > 0) { currentLaserLife--; }
-
-
 
         if (targetLocked && isActive() && shotReady()){
             fire();
@@ -102,7 +97,16 @@ public class PrecisionLaserTileEntity extends TileEntityTurret {
         updateActivity();
 
         if (isClient()) {
-            // Saving the previous state here ensures that it's updated even if the barrel doesn't rotate
+            // Visually attach a base to a nearby block
+            updateAttachmentPoint();
+
+            // Rotate laser, creating a pulsing effect
+            previousLaserRotation = currentLaserRotation;
+            currentLaserRotation += LASER_ROTATION_PER_TICK;
+            if (previousLaserRotation > 360f) { previousLaserRotation -= 360f; }
+            if (currentLaserRotation > 360f) { currentLaserRotation -= 360f; }
+
+            // Ensure that the state is updated even if the barrel doesn't rotate
             previousYaw = currentYaw;
             previousPitch = currentPitch;
 
@@ -155,21 +159,17 @@ public class PrecisionLaserTileEntity extends TileEntityTurret {
     }
 
 
-    //todo Move turret base position check from the TESR to here.
-    /*
     private void updateAttachmentPoint() {
-        if (attachmentBlock == null) {
-            BlockPos thisPos = getPos();
-            BlockPos upPos = MathUtils.getUpPos(thisPos);
-            BlockPos downPos = MathUtils.getDownPos(thisPos);
+        BlockPos thisPos = getPos();
 
-            if (!getWorld().isAirBlock(downPos)) {
-                attachmentBlock = getWorld().getBlockState(downPos).getBlock();
-            } else if (!getWorld().isAirBlock(upPos)) {
-                attachmentBlock = getWorld().getBlockState(upPos).getBlock();
+        EnumFacing[] attachmentPoints = new EnumFacing[] {EnumFacing.DOWN, EnumFacing.UP};
+
+        for (EnumFacing facing : attachmentPoints) {
+            if (!getWorld().isAirBlock(thisPos.offset(facing))) {
+                attachmentFace = facing;
             }
         }
-    }*/
+    }
 
 
     private void rotateBarrel() {
@@ -178,7 +178,9 @@ public class PrecisionLaserTileEntity extends TileEntityTurret {
             float degreesPerTick;
 
             if (isActive()) {
+
                 if (targetLocked) {
+
                     // Aggressive
                     degreesPerTick = AGGRESSIVE_TICK_DEGREES;
                     Entity target = getWorld().getEntityByID(targetID);
@@ -188,11 +190,10 @@ public class PrecisionLaserTileEntity extends TileEntityTurret {
                         SimpleRotation simulatedLookAt = simulateLookAt(target);
                         targetPitch = simulatedLookAt.pitch;
                         targetYaw = simulatedLookAt.yaw;
-                        //TurtleTech.logger.info("Target locked. Turning to rotate at degrees: " + targetYaw);
-                    } else {
-                        //TurtleTech.logger.info("Target is null in barrel rotation");
                     }
+
                 } else {
+
                     // Idle
                     degreesPerTick = IDLE_TICK_DEGREES;
 
@@ -208,7 +209,9 @@ public class PrecisionLaserTileEntity extends TileEntityTurret {
                             degreesPerTick = POWERING_UP_OR_DOWN_TICK_DEGREES;
                         }
                     }
+
                 }
+
             } else {
                 // Pitch down to visually convey a powered down state
                 targetYaw = 0;
@@ -256,10 +259,11 @@ public class PrecisionLaserTileEntity extends TileEntityTurret {
                 sync();
 
                 ModSounds.playPrecisionLaserShot(getWorld(), getPos());
+            } else {
+                laserLength = getOpticPosition().distanceTo(calculateLaserTerminus(currentPitch, currentYaw));
             }
 
 
-            laserLength = getOpticPosition().distanceTo(calculateLaserTerminus());
             shotCooldownRemaining = shotCooldownDuration;
 
             return true;
@@ -270,8 +274,7 @@ public class PrecisionLaserTileEntity extends TileEntityTurret {
 
     private void hurtVictim(Entity e){
         if (e instanceof EntityLivingBase){
-            ((EntityLivingBase)e).attackEntityFrom(Power.laser_damage, LASER_DAMAGE);
-            BlockPos bp = e.getPosition();
+            e.attackEntityFrom(Power.laser_damage, LASER_DAMAGE);
 
             if (playerOwner != null && !playerOwner.isEmpty()){
                 EntityPlayer p = getWorld().getPlayerEntityByName(playerOwner);
@@ -284,58 +287,74 @@ public class PrecisionLaserTileEntity extends TileEntityTurret {
 
 
     private List<Entity> getLaserAttackVictims(){
-        final World w = getWorld();
-        final Entity e = w.getEntityByID(targetID);
         final Vec3d origin = getOpticPosition();
-        final Vec3d dir;
 
-        SimpleRotation simulatedLookAt = simulateLookAt(e);
-        float simulatedPitch = simulatedLookAt.pitch;
-        float simulatedYaw = simulatedLookAt.yaw;
+        final Vec3d dir = calculateLaserDirection();
+        final Vec3d terminus = calculateLaserTerminus(dir);
 
-        if (e != null){
-            dir = e.getPositionVector().addVector(0, 0.5 * e.height, 0).subtract(origin).normalize();
-        } else {
-            dir = (new Vec3d(Math.cos(DEGREES_TO_RADIANS * simulatedYaw),Math.sin(simulatedPitch),Math.sin(simulatedYaw))).normalize();
-        }
-
-        final Vec3d terminus = MathUtils.followRayToSolidBlock(getWorld(), origin, dir, forwardRange);
         final double maxDistSqr = origin.squareDistanceTo(terminus);
         final double maxDist = MathHelper.sqrt_double(maxDistSqr);
 
-        List<Entity> potentialVictims = w.getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(
-                origin.xCoord - maxDist, origin.yCoord - maxDist, origin.zCoord - maxDist,
-                origin.xCoord + maxDist, origin.yCoord + maxDist, origin.zCoord + maxDist));
-        List<Entity> victims = new ArrayList<>();
+        // Get potential victims
+        List<Entity> potentialVictims = WorldUtils.getLivingEntitiesInRadius(getWorld(), origin, maxDist);
+
+        // Validate victims
+        List<Entity> validVictims = new ArrayList<>();
+
         for (Entity v : potentialVictims) {
             if (origin.squareDistanceTo(v.getPositionVector()) < maxDistSqr
-                    && rayIntersectsBoundingBox(origin,dir,v.getEntityBoundingBox())){
-                victims.add(v);
+                    && rayIntersectsBoundingBox(origin, dir, v.getEntityBoundingBox())){
+                validVictims.add(v);
             }
         }
-        return victims;
+
+        return validVictims;
+    }
+
+    private Vec3d calculateLaserDirection() {
+        final Entity e = getWorld().getEntityByID(targetID);
+        SimpleRotation simulatedLookAt = simulateLookAt(e);
+
+        Vec3d dir;
+
+        if (e != null){dir = MathUtils.calculateDirection(getOpticPosition(), e);}
+        else {dir = MathUtils.calculateDirection(simulatedLookAt.pitch, simulatedLookAt.yaw);}
+
+        return dir;
     }
 
     private Vec3d calculateLaserTerminus(){
-        float correctedYaw = MathUtils.changeYawRelativity(EnumFacing.EAST, getFacing(), targetYaw);
+        return calculateLaserTerminus(calculateLaserDirection());
+    }
 
-        Vec3d dir;
-        World w = getWorld();
-        Entity e = w.getEntityByID(targetID);
-        if (e != null){
-            dir = e.getPositionVector().addVector(0, 0.5*e.height, 0).subtract(this.getOpticPosition()).normalize();
-        } else {
-            dir = (new Vec3d(Math.cos(DEGREES_TO_RADIANS * correctedYaw),Math.sin(currentPitch),Math.sin(correctedYaw))).normalize();
-        }
-        return MathUtils.followRayToSolidBlock(getWorld(), getOpticPosition(), dir, forwardRange);
+    private Vec3d calculateLaserTerminus(float pitch, float yaw){
+        float worldYaw = MathUtils.changeYawRelativity(EnumFacing.NORTH, getFacing(), yaw);
+
+        Vec3d dir = MathUtils.calculateDirection(pitch, worldYaw);
+        Vec3d terminus = calculateLaserTerminus(dir);
+
+        return terminus;
+    }
+
+    private Vec3d calculateLaserTerminus(Vec3d direction) {
+        return WorldUtils.followRayToSolidBlock(getWorld(), getOpticPosition(direction), direction, forwardRange);
     }
 
 
     final private int renderRange = (int)forwardRange + 1;
     @SideOnly(Side.CLIENT)
     public AxisAlignedBB getRenderBoundingBox() {
-        //todo Find out how often this is used. Possible optimization by expanding only while firing.
-        return new AxisAlignedBB(getPos().add(-renderRange, -renderRange, -renderRange), getPos().add(renderRange, renderRange, renderRange));
+        if (isFiring()) {
+            return new AxisAlignedBB(
+                    getPos().add(-renderRange, -renderRange, -renderRange),
+                    getPos().add(renderRange, renderRange, renderRange)
+            );
+        }
+
+        return new AxisAlignedBB(
+                getPos().add(-0.5D, -0.5D, -0.5D),
+                getPos().add(0.5D, 0.5D, 0.5D)
+        );
     }
 
 

@@ -5,6 +5,7 @@ import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.*;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -81,27 +82,11 @@ public class PrecisionLaserTurretRenderer extends TileEntitySpecialRenderer<Prec
         renderBase(te);
         GlStateManager.enableCull();
 
-//        GlStateManager.popMatrix();
-//        GlStateManager.pushMatrix();
-
         GlStateManager.rotate(yaw, 0.0f, 1.0f, 0.0f);
         GlStateManager.rotate(interpolatedPitch, 1.0f, 0.0f, 0.0f);
 
 
         renderBarrel(partialTick, te);
-
-
-        //renderLaser(te);
-
-        /*
-        IModel model = ModelLoaderRegistry.getMissingModel();
-        try {
-            String modelPath = "block/precision_laser_turret.obj";
-            model = ModelLoaderRegistry.getModel(new ResourceLocation(DataModInfo.MOD_ID.toLowerCase() + ":" + modelPath));
-        } catch (IOException e) {
-            model = ModelLoaderRegistry.getMissingModel();
-        }
-        */
 
         RenderHelper.enableStandardItemLighting();
     }
@@ -128,8 +113,7 @@ public class PrecisionLaserTurretRenderer extends TileEntitySpecialRenderer<Prec
         Size3D baseSize = new Size3D(baseLength, baseWidth, baseHeight);
         Size3D baseShaftSize = new Size3D(baseShaftRadius, baseShaftRadius, baseShaftHeight);
 
-        RelativePosition baseRelativeDirection = getBaseDirection(te);
-        float baseDirection = baseRelativeDirection.isUp() ? 1 : -1;
+        float baseDirection = te.attachmentFace == EnumFacing.UP ? 1 : -1;
         float baseVertical = 0.5f - baseHeight / 2f;
         float baseShaftVertical = baseShaftHeight / 2f;
         RelativePosition basePosition = new RelativePosition(0, 0, baseVertical * baseDirection);
@@ -148,7 +132,7 @@ public class PrecisionLaserTurretRenderer extends TileEntitySpecialRenderer<Prec
         // Rendering
         vertexBuffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
 
-        if (baseRelativeDirection.isUp() || baseRelativeDirection.isDown()) {
+        if (te.attachmentFace == EnumFacing.UP || te.attachmentFace == EnumFacing.DOWN) {
             RenderUtils.addCube(vertexBuffer, baseCubeMap, baseSize, basePosition);
             RenderUtils.addCube(vertexBuffer, baseShaftCubeMap, baseShaftSize, baseShaftPosition);
         }
@@ -294,7 +278,7 @@ public class PrecisionLaserTurretRenderer extends TileEntitySpecialRenderer<Prec
             float laserStart = barrelStart + barrelLength;
             float laserRoll = MathUtils.lerp(te.previousLaserRotation, te.currentLaserRotation, partialTick);
 
-            float laserLifeLevel = interpolatedLaserLife / te.LASER_LIFE;
+            float laserLifeLevel = interpolatedLaserLife / PrecisionLaserTileEntity.LASER_LIFE;
             float laserRadiusMultiplier = MathUtils.interpolateAroundThreshold(laserLifeLevel, 0.7f, 0.15f, 2f);
             float laserLength = (float)te.laserLength - laserStart;
             float laserStartRadius = coreRadius * laserRadiusMultiplier;
@@ -310,23 +294,6 @@ public class PrecisionLaserTurretRenderer extends TileEntitySpecialRenderer<Prec
 
         tessellator.draw();
         GlStateManager.enableLighting();
-
-    }
-
-    private RelativePosition getBaseDirection(PrecisionLaserTileEntity te) {
-        BlockPos thisPos = te.getPos();
-        BlockPos upPos = MathUtils.getUpPos(thisPos);
-        BlockPos downPos = MathUtils.getDownPos(thisPos);
-
-        RelativePosition relativePosition = new RelativePosition();
-
-        if (!getWorld().isAirBlock(downPos)) {
-            relativePosition.upward = -1;
-        } else if (!getWorld().isAirBlock(upPos)) {
-            relativePosition.upward = 1;
-        }
-
-        return relativePosition;
     }
 
 }

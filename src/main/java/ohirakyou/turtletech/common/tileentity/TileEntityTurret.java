@@ -1,7 +1,5 @@
 package ohirakyou.turtletech.common.tileentity;
 
-import com.sun.javafx.geom.Vec2f;
-import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.EnumCreatureType;
@@ -16,12 +14,10 @@ import net.minecraft.world.World;
 import ohirakyou.turtletech.util.MathUtils;
 import ohirakyou.turtletech.util.SimpleRotation;
 
-import javax.vecmath.Vector2f;
 import java.util.List;
 
 public abstract class TileEntityTurret extends TileEntityPoweredMachine {
-    protected static final float RADIANS_TO_DEGREES = (float)(180 / Math.PI);
-    protected static final float DEGREES_TO_RADIANS = (float)(Math.PI / 180);
+    public static float opticOffset = 1f;
 
     // Targeting range
     public float hRange;
@@ -114,9 +110,6 @@ public abstract class TileEntityTurret extends TileEntityPoweredMachine {
 
     protected void acquireTarget() {
         World w = getWorld();
-        /*if(shotCurrentCharge > 0){
-            shotCurrentCharge--;
-        }*/
 
         boolean isActive = isActive();
 
@@ -126,7 +119,6 @@ public abstract class TileEntityTurret extends TileEntityPoweredMachine {
                 if(targetLocked) {
                     chargeShot();
                 } else {
-                    final Block thisBlock = getWorld().getBlockState(getPos()).getBlock();
 
                     double x = this.getOpticPosition().xCoord;
                     double y = this.getOpticPosition().yCoord;
@@ -150,10 +142,6 @@ public abstract class TileEntityTurret extends TileEntityPoweredMachine {
 
                 validateTarget();
 
-                /*if(targetLocked && shotReady()){
-                    fire();
-                }*/
-
             } else {
                 // Lose target when inactive
                 if(targetLocked){
@@ -166,15 +154,16 @@ public abstract class TileEntityTurret extends TileEntityPoweredMachine {
 
 
     public boolean canSeeEntity(Entity e){
-        if(e == null) { return false; }
-        if (!targetInRange(e)) { return false; }
+        if (e == null) {return false;}
+        if (!targetInRange(e)) {return false;}
 
-        // Simulate look at. Check h and v range
+        Vec3d direction = e.getPositionVector().subtract(getOpticPosition()).normalize();
 
-        Vec3d offsetOrigin = getOpticPosition().add(e.getPositionVector().subtract(getOpticPosition()).normalize());
-        RayTraceResult collision = getWorld().rayTraceBlocks(offsetOrigin, e.getPositionVector().addVector(0, e.height*0.5, 0), true, true, false);
+        RayTraceResult collision = getWorld().rayTraceBlocks(
+                getOpticPosition(direction), e.getPositionVector().addVector(0, e.height * 0.5, 0), true, true, false
+        );
 
-        if(collision != null && collision.typeOfHit == RayTraceResult.Type.BLOCK){
+        if (collision != null && collision.typeOfHit == RayTraceResult.Type.BLOCK) {
             return false;
         }
 
@@ -182,75 +171,28 @@ public abstract class TileEntityTurret extends TileEntityPoweredMachine {
     }
 
     private boolean targetInRange(Entity e) {
-        if(e == null) return false;
+        if (e == null) return false;
 
-        Vec3d coord = e.getPositionVector().addVector(0, e.height*0.5, 0);
+        SimpleRotation simulatedLookAt = simulateLookAt(e);
 
-        Vec3d pos = getOpticPosition();
-        double x = pos.xCoord;
-        double y = pos.yCoord;
-        double z = pos.zCoord;
-        double dist = distance(x,y,z,coord.xCoord, coord.yCoord, coord.zCoord);
-        float simulatedPitch = RADIANS_TO_DEGREES * asin((coord.yCoord - y)/dist);
-
-        // Is the simulated pitch within the vertical range?
-        if (MathUtils.clampSymmetrical(simulatedPitch, vRange) != simulatedPitch) {
-            return false;
-        }
-
-        // Is the simulated yaw within the horizontal range?
-        float simulatedYaw = RADIANS_TO_DEGREES * atan2(coord.zCoord - z, coord.xCoord - x);
-        simulatedYaw = MathUtils.changeYawRelativity(getFacing(), EnumFacing.EAST, simulatedYaw);
-
-        if (MathUtils.clampSymmetrical(simulatedYaw, hRange) != simulatedYaw) {
-            return false;
-        }
-
-        return true;
+        return (MathUtils.clampSymmetrical(simulatedLookAt.pitch, vRange) == simulatedLookAt.pitch) &&
+                (MathUtils.clampSymmetrical(simulatedLookAt.yaw, hRange) == simulatedLookAt.yaw);
     }
-
-    /*
-    protected void lookAt(Entity e) {
-        Vec3d pos = e.getPositionVector().addVector(0, e.height*0.5, 0);
-        targetPosition(pos);
-    }
-
-    private void targetPosition(Vec3d coord) {
-        Vec3d pos = getOpticPosition();
-        double x = pos.xCoord;
-        double y = pos.yCoord;
-        double z = pos.zCoord;
-        double dist = distance(x,y,z,coord.xCoord, coord.yCoord, coord.zCoord);
-        targetYaw = RADIANS_TO_DEGREES * atan2(coord.zCoord - z, coord.xCoord - x);
-        targetPitch = RADIANS_TO_DEGREES * asin((coord.yCoord - y)/dist);
-
-        targetYaw = MathUtils.changeYawRelativity(getFacing(), EnumFacing.EAST, targetYaw);
-        //TurtleTech.logger.info("Corrected: " + MathUtils.changeYawRelativity(getFacing(), EnumFacing.EAST, targetYaw));
-    }*/
-
 
     protected SimpleRotation simulateLookAt(Entity e) {
-        Vec3d coord = e.getPositionVector().addVector(0, e.height*0.5, 0);
-        //targetPosition(coord);
+        Vec3d coords = e.getPositionVector().addVector(0, e.height * 0.5, 0);
 
         Vec3d pos = getOpticPosition();
         double x = pos.xCoord;
         double y = pos.yCoord;
         double z = pos.zCoord;
-        double dist = distance(x,y,z,coord.xCoord, coord.yCoord, coord.zCoord);
-        float simulatedYaw = RADIANS_TO_DEGREES * atan2(coord.zCoord - z, coord.xCoord - x);
-        float simulatedPitch = RADIANS_TO_DEGREES * asin((coord.yCoord - y)/dist);
+        double dist = MathUtils.distance(x, y, z, coords.xCoord, coords.yCoord, coords.zCoord);
+        float simulatedYaw = MathUtils.RADIANS_TO_DEGREES * atan2(coords.zCoord - z, coords.xCoord - x);
+        float simulatedPitch = MathUtils.RADIANS_TO_DEGREES * asin((coords.yCoord - y) / dist);
 
         simulatedYaw = MathUtils.changeYawRelativity(getFacing(), EnumFacing.EAST, simulatedYaw);
 
-        return new SimpleRotation(simulatedPitch, 0, simulatedYaw);
-    }
-
-    private double distance(double x1,double y1,double z1,double x2,double y2,double z2){
-        double dx = x2-x1;
-        double dy = y2-y1;
-        double dz = z2-z1;
-        return MathHelper.sqrt_double(dx * dx + dy * dy + dz * dz);
+        return new SimpleRotation(simulatedPitch, 0,  MathUtils.wrapAngle180(simulatedYaw));
     }
 
     private float atan2(double dy, double dx){
@@ -266,11 +208,24 @@ public abstract class TileEntityTurret extends TileEntityPoweredMachine {
         return opticPosition;
     }
 
+    /**
+     * Gets the optic position, offset towards a direction.
+     * <p>
+     * The direction should normally be the direction the barrel is pointed toward.
+     *
+     * @param direction  scaled to create an offset
+     * @return
+     */
+    public Vec3d getOpticPosition(Vec3d direction){
+        return getOpticPosition().add(direction.scale(opticOffset));
+    }
+
     @Override
     public void setPos(BlockPos p){
         super.setPos(p);
         setOpticPosition();
     }
+
     public final void setOpticPosition(){
         BlockPos p = getPos();
         opticPosition = new Vec3d(p.getX() + 0.5f, p.getY() + 0.5f, p.getZ() + 0.5f);
@@ -307,16 +262,10 @@ public abstract class TileEntityTurret extends TileEntityPoweredMachine {
         double tmax = min(min(max(t1, t2), max(t3, t4)), max(t5, t6));
 
         // if tmax < 0, ray (line) is intersecting AABB, but whole AABB is behind us
-        if (tmax < 0)
-        {
-            return false;
-        }
+        if (tmax < 0) {return false;}
 
         // if tmin > tmax, ray doesn't intersect AABB
-        if (tmin > tmax)
-        {
-            return false;
-        }
+        if (tmin > tmax) {return false;}
 
         return true;
     }
