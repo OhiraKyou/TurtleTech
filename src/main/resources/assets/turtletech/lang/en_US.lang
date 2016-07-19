@@ -53,6 +53,11 @@ tile.turtletech:cast_iron_frame.name=Cast Iron Frame
 tile.turtletech:cast_iron_casing.name=Cast Iron Casing
 tile.turtletech:cast_iron_tread.name=Cast Iron Tread
 tile.turtletech:cast_iron_tread.tooltip=Increases movement speed
+tile.turtletech:cast_iron_slab.name=Cast Iron Slab
+tile.turtletech:cast_iron_slab_double.name=Double Cast Iron Slab
+tile.turtletech:cast_iron_stairs.name=Cast Iron Stairs
+tile.turtletech:cast_iron_casing_stairs.name=Cast Iron Casing Stairs
+tile.turtletech:cast_iron_grate.name=Cast Iron Grate
 
 # TURRETS
 tile.turtletech:precision_laser_turret.name=Precision Laser Turret
@@ -71,6 +76,7 @@ tile.turtletech:crucible.tooltip=Melts substances
 tile.turtletech:creative_generator.name=Creative Generator
 tile.turtletech:redstone_reflex_generator.name=Redstone Reflex Generator
 tile.turtletech:redstone_reflex_generator.tooltip=Generates energy from redstone pulses
+tile.turtletech:solar_reflex_generator.name=Solar Reflex Generator
 tile.turtletech:soul_turbine_generator.name=Soul Turbine Generator
 tile.turtletech:soul_turbine_generator.tooltip=Generates energy from souls
 tile.turtletech:soul_turbine_generator.more=Generates energy from converted items or while on soul sand in the nether.

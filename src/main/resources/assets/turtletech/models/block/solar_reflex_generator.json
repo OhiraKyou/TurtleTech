@@ -1,0 +1,13 @@
+{
+    "parent": "turtletech:orientable_unique",
+    "textures": {
+        "particle": "#side",
+        "down": "#bottom",
+        "up": "#top",
+        "side": "#side",
+        "north": "#side",
+        "east": "#side",
+        "south": "#side",
+        "west": "#side"
+    }
+}

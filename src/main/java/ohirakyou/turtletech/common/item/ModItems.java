@@ -5,6 +5,7 @@ import cyano.basemetals.items.*;
 import cyano.basemetals.material.IMetalObject;
 import cyano.basemetals.material.MetalMaterial;
 import cyano.basemetals.registry.IOreDictionaryEntry;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockDoor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -17,7 +18,6 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
-import ohirakyou.turtletech.TurtleTech;
 import ohirakyou.turtletech.common.block.*;
 import ohirakyou.turtletech.common.block.BlockMetalDoor;
 import ohirakyou.turtletech.common.material.Materials;
@@ -70,6 +70,8 @@ public class ModItems {
     public static Item cast_iron_sword;
     public static Item cast_iron_rod;
 
+    public static Item cast_iron_slab;
+
 
 
     public static Item getDoorItemForBlock(BlockMetalDoor b){
@@ -81,6 +83,10 @@ public class ModItems {
     public static void init(){
         if(initDone) return;
 
+        // Slabs
+        cast_iron_slab = create_slab(Materials.cast_iron);
+
+        // Generated items
         cast_iron_axe = create_axe(Materials.cast_iron);
         cast_iron_blend = create_blend(Materials.cast_iron);
         cast_iron_boots = create_boots(Materials.cast_iron);
@@ -245,12 +251,19 @@ public class ModItems {
     }
 
     private static Item create_door(MetalMaterial metal, BlockDoor door){
-        ResourceLocation location = new ResourceLocation(DataModInfo.MOD_ID, metal.getName()+"_door");
+        ResourceLocation location = new ResourceLocation(DataModInfo.MOD_ID, metal.getName() + "_door");
         Item item = new ItemMetalDoor(door, metal);
-        registerItem(item, location.getResourcePath().toString(), "item", metal, ItemGroups.tab_blocks);
+        registerItem(item, location.getResourcePath(), "item", metal, ItemGroups.tab_blocks);
         item.setUnlocalizedName(location.toString()); // Hack to set name right
         doorMap.put(door, item);
         return item;
+    }
+
+    private static Item create_slab(MetalMaterial metal){
+        String metalName = metal.getName();
+        Block block = ModBlocks.getBlockByName(metalName + "_slab");
+
+        return registerItem(new ItemModSlab(block), metalName, "slab", metal, ItemGroups.tab_items);
     }
 
 

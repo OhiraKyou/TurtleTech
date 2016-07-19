@@ -38,4 +38,11 @@ public abstract class WorldUtils {
                 origin.xCoord - radius, origin.yCoord - radius, origin.zCoord - radius,
                 origin.xCoord + radius, origin.yCoord + radius, origin.zCoord + radius));
     }
+
+    public static AxisAlignedBB getBoundingBoxWithRadius(BlockPos pos, double radius) {
+        double start = 0.5D -radius;
+        double end = 0.5D + radius;
+
+        return new AxisAlignedBB(pos.add(start, start, start), pos.add(end, end, end));
+    }
 }

@@ -1,0 +1,8 @@
+{
+    "parent": "basemetals:block/plate",
+    "textures": {
+        "top": "turtletech:blocks/cast_iron_grate",
+        "side": "turtletech:blocks/cast_iron_block",
+        "bottom": "turtletech:blocks/cast_iron_grate"
+    }
+}

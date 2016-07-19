@@ -1,0 +1,50 @@
+{
+    "forge_marker": 1,
+    "defaults": {
+        "textures": {
+            "side": "turtletech:blocks/cast_iron_plate",
+            "bottom": "turtletech:blocks/cast_iron_plate",
+            "top": "turtletech:blocks/solar_reflex_generator_off"
+        },
+        "model": "turtletech:solar_reflex_generator",
+        "uvlock": true
+    },
+    "variants": {
+        "inventory": {
+            "model": "turtletech:solar_reflex_generator",
+
+            "textures": {
+                "top": "turtletech:blocks/solar_reflex_generator_on"
+            }
+        },
+
+        "facing": {
+            "north": {},
+            "east": { "y": 90 },
+            "south": { "y": 180 },
+            "west": { "y": 270 }
+        },
+
+        "powered": {
+            "true": {
+                "textures": {
+                    "top": "turtletech:blocks/solar_reflex_generator_on"
+                }
+            },
+            "false": {
+                "textures": {
+                    "top": "turtletech:blocks/solar_reflex_generator_off"
+                }
+            }
+        },
+
+        "active": {
+            "true": {
+                "textures": {}
+            },
+            "false": {
+                "textures": {}
+            }
+        }
+    }
+}

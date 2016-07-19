@@ -127,6 +127,11 @@ public abstract class TileEntityPoweredMachine extends TileEntityMachine {
         teslaContainer.distributePowerFromBuffer(getWorld(), getPos());
     }
 
+    public void generateAndDistributeEnergy(long energy) {
+        generateEnergy(energy);
+        distributeEnergyFromBuffer();
+    }
+
     public void generateAndDistributeEnergy() {
         generateEnergy();
         distributeEnergyFromBuffer();
@@ -181,12 +186,10 @@ public abstract class TileEntityPoweredMachine extends TileEntityMachine {
         }
     }
 
-    public abstract boolean isPowered();
+    public boolean isPowered() {return true;}
 
     @Override
-    public boolean isActive(){
-        return super.isActive() && isPowered();
-    }
+    public boolean isActive() {return super.isActive() && isPowered();}
 
 
     // Data management

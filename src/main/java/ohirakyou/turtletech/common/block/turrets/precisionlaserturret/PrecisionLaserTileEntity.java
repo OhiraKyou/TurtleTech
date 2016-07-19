@@ -341,20 +341,10 @@ public class PrecisionLaserTileEntity extends TileEntityTurret {
     }
 
 
-    final private int renderRange = (int)forwardRange + 1;
     @SideOnly(Side.CLIENT)
     public AxisAlignedBB getRenderBoundingBox() {
-        if (isFiring()) {
-            return new AxisAlignedBB(
-                    getPos().add(-renderRange, -renderRange, -renderRange),
-                    getPos().add(renderRange, renderRange, renderRange)
-            );
-        }
-
-        return new AxisAlignedBB(
-                getPos().add(-0.5D, -0.5D, -0.5D),
-                getPos().add(0.5D, 0.5D, 0.5D)
-        );
+        if (isFiring()) {return WorldUtils.getBoundingBoxWithRadius(getPos(), forwardRange + 1);}
+        return WorldUtils.getBoundingBoxWithRadius(getPos(), 1.5D);
     }
 
 

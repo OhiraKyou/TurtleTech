@@ -13,6 +13,7 @@ public class ClientProxy extends CommonProxy {
         super.preInit(event);
 
         ModRenderers.init();
+        ModModels.init();
     }
 
     @Override

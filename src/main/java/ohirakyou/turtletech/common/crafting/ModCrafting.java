@@ -12,11 +12,11 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
-import ohirakyou.turtletech.TurtleTech;
 import ohirakyou.turtletech.common.material.Materials;
 import ohirakyou.turtletech.common.block.ModBlocks;
 import ohirakyou.turtletech.common.item.ModItems;
 import ohirakyou.turtletech.data.DataMods;
+import org.apache.commons.lang3.ArrayUtils;
 
 //// TODO: 6/14/2016  Automate creation of recipe enable/disable toggles in config
 
@@ -35,77 +35,57 @@ public final class ModCrafting {
 
     private static void initCustomRecipes() {
         // Miscellaneous cast iron items
-        GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(ModBlocks.cast_iron_casing),
-                "plateCastIron", "plateCastIron", "plateCastIron", "plateCastIron", "plateCastIron", "plateCastIron"));
+        addHollowCubeRecipe(ModBlocks.cast_iron_casing, ModBlocks.cast_iron_plate, "plateCastIron");
 
-        GameRegistry.addShapelessRecipe(new ItemStack(ModBlocks.cast_iron_plate, 6), ModBlocks.cast_iron_casing);
-
-        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.cast_iron_tread, 3),
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.cast_iron_tread, 2),
                 " i ",
                 "ibi",
                 'i', ModItems.cast_iron_ingot, 'b', ModBlocks.cast_iron_block));
 
 
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.cast_iron_grate, 6),
+                "i i",
+                " i ",
+                "i i",
+                'i', "ingotCastIron"));
+
+
+        // Stairs
+        addStairsRecipe(ModBlocks.cast_iron_stairs, ModBlocks.cast_iron_block);
+        addStairsRecipe(ModBlocks.cast_iron_casing_stairs, ModBlocks.cast_iron_casing);
+
+
+        // Slabs
+        addSlabRecipe(ModBlocks.cast_iron_slab, ModBlocks.cast_iron_block);
+
 
         // Generators
-        GameRegistry.addRecipe(new ShapedOreRecipe(ModBlocks.redstone_reflex_generator,
-                " p ",
-                "oio",
-                "rcr",
-                'p', Blocks.PISTON,
-                'o', "ingotCopper", 'i', "ingotIron",
-                'r', "dustRedstone", 'c', ModBlocks.cast_iron_casing));
+        addCastIronGeneratorRecipe(ModBlocks.redstone_reflex_generator, Blocks.PISTON);
+        addCastIronGeneratorRecipe(ModBlocks.solar_reflex_generator, Blocks.PISTON, Blocks.DAYLIGHT_DETECTOR);
 
-        GameRegistry.addRecipe(new ShapedOreRecipe(ModBlocks.soul_turbine_generator,
-                " s ",
-                "oio",
-                "rcr",
-                's', "ingotSoularium",
-                'o', "ingotCopper", 'i', "ingotIron",
-                'r', "dustRedstone", 'c', ModBlocks.cast_iron_casing));
-
+        addCastIronGeneratorRecipe(ModBlocks.soul_turbine_generator, "ingotSoularium");
         if (!(Loader.isModLoaded(DataMods.ENDERIO))) {
-            // Fallback for when EnderIO is not installed. 1x soul sand and 1x gold is equivalent to soularium
-            // The extra gold ingot compensates for not requiring power to craft the soularium
-            GameRegistry.addRecipe(new ShapedOreRecipe(ModBlocks.soul_turbine_generator,
-                    "gsg",
-                    "oio",
-                    "rcr",
-                    'g', "ingotGold",'s', Blocks.SOUL_SAND,
-                    'o', "ingotCopper", 'i', "ingotIron",
-                    'r', "dustRedstone", 'c', ModBlocks.cast_iron_casing));
+            addCastIronGeneratorRecipe(ModBlocks.soul_turbine_generator, "ingotGold", Blocks.SOUL_SAND, "ingotGold");
         }
-
 
 
         // Turrets
-        GameRegistry.addRecipe(new ShapedOreRecipe(ModBlocks.precision_laser_turret,
-                "pde",
-                "rcr",
-                'p', "PSU", 'd', "gemDiamond", 'e', "gemEmerald",
-                'r', "dustRedstone", 'c', ModBlocks.cast_iron_casing));
-
-        GameRegistry.addRecipe(new ShapedOreRecipe(ModBlocks.precision_laser_turret,
-                "ped",
-                "rcr",
-                'p', "PSU", 'd', "gemDiamond", 'e', "gemEmerald",
-                'r', "dustRedstone", 'c', ModBlocks.cast_iron_casing));
+        addCastIronMachineRecipe(ModBlocks.precision_laser_turret, "pde", new Object[]{
+                'p', "PSU", 'd', "gemDiamond", 'e', "gemEmerald"});
+        addCastIronMachineRecipe(ModBlocks.precision_laser_turret, "ped", new Object[]{
+                'p', "PSU", 'd', "gemDiamond", 'e', "gemEmerald"});
 
         if (!(Loader.isModLoaded(DataMods.ELECTRIC_ADVANTAGE))) {
             // Fallback for when Electric Advantage is not installed
-            GameRegistry.addRecipe(new ShapedOreRecipe(ModBlocks.precision_laser_turret,
-                    "ede",
-                    "rcr",
-                    'd', "gemDiamond", 'e', "gemEmerald",
-                    'r', "dustRedstone", 'c', ModBlocks.cast_iron_casing));
+            addCastIronMachineRecipe(ModBlocks.precision_laser_turret, "ede", new Object[]{
+                    'd', "gemDiamond", 'e', "gemEmerald"});
         }
 
-        GameRegistry.addRecipe(new ShapedOreRecipe(ModBlocks.turret_extender,
+
+        addCastIronMachineRecipe(ModBlocks.turret_extender,
                 " p ",
                 " i ",
-                "rcr",
-                'p', "plateCastIron", 'i', Blocks.PISTON,
-                'r', "dustRedstone", 'c', ModBlocks.cast_iron_casing));
+                new Object[]{'p', "plateCastIron", 'i', Blocks.PISTON});
 
 
 
@@ -115,6 +95,93 @@ public final class ModCrafting {
                 "bcb",
                 "bbb",
                 'c', Items.CLAY_BALL, 'o', new ItemStack(Items.COAL, 1, OreDictionary.WILDCARD_VALUE), 'b', "ingotBrick"));
+    }
+
+    private static void addSlabRecipe(Block slab, Block block) {
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(slab, 4),
+                "bb",
+                'b', block));
+
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(block, 1),
+                "s",
+                "s",
+                's', slab));
+    }
+
+    private static void addStairsRecipe(Block stairs, Block block) {
+        // Blocks -> stairs
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(stairs, 8),
+                "b  ",
+                "bb ",
+                "bbb",
+                'b', block));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(stairs, 8),
+                "  b",
+                " bb",
+                "bbb",
+                'b', block));
+
+        // Stairs -> blocks
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(block, 3),
+                "ss",
+                "ss",
+                's', stairs));
+    }
+
+    private static void addHollowCubeRecipe(Block cube, Block plate, String plateName) {
+        // Plates -> cube
+        GameRegistry.addRecipe(new ShapelessOreRecipe(cube,
+                plateName, plateName, plateName, plateName, plateName, plateName));
+
+        // Cube -> plates
+        GameRegistry.addShapelessRecipe(new ItemStack(plate, 6), cube);
+    }
+
+    private static void addCastIronGeneratorRecipe(Block generator, Object driver) {
+        addCastIronGeneratorRecipe(generator, " d ", new Object[]{'d', driver});
+
+        //todo create a simple base generator and add a recipe that uses it and the driver
+        //GameRegistry.addRecipe(new ShapelessOreRecipe(generator, driver, ModBlocks.simple_generator));
+    }
+
+    private static void addCastIronGeneratorRecipe(Block generator, Object driver1, Object driver2) {
+        Object[] materials = new Object[]{'a', driver1, 'b', driver2};
+        addCastIronGeneratorRecipe(generator, "ba ", materials);
+        addCastIronGeneratorRecipe(generator, " ab", materials);
+    }
+
+    private static void addCastIronGeneratorRecipe(Block generator, Object driver1, Object driver2, Object driver3) {
+        Object[] materials = new Object[]{'a', driver1, 'b', driver2, 'c', driver3};
+        addCastIronGeneratorRecipe(generator, "abc", materials);
+    }
+
+    private static void addCastIronGeneratorRecipe(Block generator, String topRow, Object[] driverMaterials) {
+        // Capital letters are used here to distinguish shared generator materials from unique driver materials
+        Object[] generatorMaterials = {'O', "ingotCopper", 'I', "ingotIron",};
+        Object[] materials = ArrayUtils.addAll(driverMaterials, generatorMaterials);
+
+        addCastIronMachineRecipe(generator, topRow, "OIO", materials);
+    }
+
+
+    private static void addCastIronMachineRecipe(Block machine, String topRow, Object[] machineMaterials) {
+        addCastIronMachineRecipe(machine, new Object[]{topRow}, machineMaterials);
+    }
+
+    private static void addCastIronMachineRecipe(Block machine, String topRow, String middleRow, Object[] machineMaterials) {
+        addCastIronMachineRecipe(machine, new Object[]{topRow, middleRow}, machineMaterials);
+    }
+
+    private static void addCastIronMachineRecipe(Block machine, Object[] rows, Object[] machineMaterials) {
+        // Capital letters are used here to distinguish shared machine materials from unique recipe materials
+        Object[] shapeDefinition = ArrayUtils.add(rows, "RCR");
+
+        Object[] generatorMaterials = {'R', "dustRedstone", 'C', ModBlocks.cast_iron_casing};
+
+        Object[] finalRecipe = ArrayUtils.addAll(shapeDefinition, machineMaterials);
+        finalRecipe = ArrayUtils.addAll(finalRecipe, generatorMaterials);
+
+        GameRegistry.addRecipe(new ShapedOreRecipe(machine, finalRecipe));
     }
 
 
