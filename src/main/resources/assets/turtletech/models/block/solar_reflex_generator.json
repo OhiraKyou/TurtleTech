@@ -1,5 +1,5 @@
 {
-    "parent": "turtletech:orientable_unique",
+    "parent": "turtletech:block/orientable_unique",
     "textures": {
         "particle": "#side",
         "down": "#bottom",
