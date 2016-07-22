@@ -1,16 +1,15 @@
 package ohirakyou.turtletech.common.block.generators.solar;
 
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import ohirakyou.turtletech.common.tileentity.TileEntityPoweredMachine;
+import ohirakyou.turtletech.util.WorldUtils;
 
 public class SolarGeneratorTileEntity extends TileEntityPoweredMachine {
-    private static final float PI = (float)Math.PI;
-    private static final float SUM_OF_SINE_TICKS = 24000 / PI;
+    protected static long clearSolarOutput, rainSolarOutput, thunderSolarOutput;
+    protected static int clearOutputTicks, rainOutputTicks, thunderOutputTicks;
 
-    public static float solarPerDay, thunderModifier, rainModifier;
-
-    public static final float MAX_SOLAR_OUTPUT = PI * solarPerDay / SUM_OF_SINE_TICKS;
+    private int ticksBetweenOutput;
 
 
     public SolarGeneratorTileEntity() {
@@ -20,9 +19,15 @@ public class SolarGeneratorTileEntity extends TileEntityPoweredMachine {
     }
 
     protected void loadConfig() {
-        solarPerDay = 12500;
-        thunderModifier = 0.2f;
-        rainModifier = 0.35f;
+        // Energy output
+        clearSolarOutput = 1;
+        rainSolarOutput = 1;
+        thunderSolarOutput = 0;
+
+        // Ticks between energy pulses
+        clearOutputTicks = 0;
+        rainOutputTicks = 1;
+        thunderOutputTicks = 0;
     }
 
     @Override
@@ -30,33 +35,55 @@ public class SolarGeneratorTileEntity extends TileEntityPoweredMachine {
         super.tickUpdate(isServerWorld);
 
         if (isServer()) {
-            if (exposedToSky()){
-                // Generate energy
-                long energy = (long)Math.max(0, MAX_SOLAR_OUTPUT * getLight());
-                generateAndDistributeEnergy(energy);
+            // Don't bother ticking when there's no energy to be had
+            long energyThisTick = getSolarEnergy();
+
+            if (energyThisTick > 0 && exposedToDaylight()){
+
+                if (ticksBetweenOutput >= getTicksToOutput()) {
+                    ticksBetweenOutput = 0;
+
+                    // Generate energy
+                    generateAndDistributeEnergy(energyThisTick);
+                }
+                else {
+                    ticksBetweenOutput++;
+                }
             }
         }
     }
 
-    public boolean exposedToSky() {
+    public boolean exposedToDaylight() {
         World w = getWorld();
-        return w.canSeeSky(pos) && !w.provider.getHasNoSky();
+        return w.canSeeSky(pos.offset(EnumFacing.UP)) && !w.provider.getHasNoSky() && WorldUtils.isDaytime(w);
     }
 
-    public float getLight() {
+    public int getTicksToOutput() {
         World w = getWorld();
 
-        float light = MathHelper.sin((float)w.getWorldTime() * PI / 12000f); // (worldTime * pi / 12000)
+        int ticksToOutput;
 
         // Handle weather
-        if (w.isThundering()) {light *= thunderModifier;}
-        else if (w.isRaining()) {light *= rainModifier;}
+        if (w.isThundering()) {ticksToOutput = thunderOutputTicks;}
+        else if (w.isRaining()) {ticksToOutput = rainOutputTicks;}
+        else {ticksToOutput = clearOutputTicks;}
 
-        return light;
+        return ticksToOutput;
+    }
+
+    public long getSolarEnergy() {
+        World w = getWorld();
+
+        long solarOutput;
+
+        // Handle weather
+        if (w.isThundering()) {solarOutput = thunderSolarOutput;}
+        else if (w.isRaining()) {solarOutput = rainSolarOutput;}
+        else {solarOutput = clearSolarOutput;}
+
+        return solarOutput;
     }
 
     @Override
-    public boolean isPowered() {
-        return super.isPowered() && exposedToSky() && getLight() > 0;
-    }
+    public boolean isPowered() {return super.isPowered() && exposedToDaylight();}
 }

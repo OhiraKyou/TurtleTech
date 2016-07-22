@@ -1,22 +1,13 @@
 package ohirakyou.turtletech.common.tileentity;
 
-import net.darkhax.tesla.api.ITeslaHolder;
-import net.darkhax.tesla.capability.TeslaCapabilities;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
-import ohirakyou.turtletech.TurtleTech;
 import ohirakyou.turtletech.common.block.BlockMachine;
-import ohirakyou.turtletech.util.ChatUtils;
-
-import java.util.Arrays;
 
 public abstract class TileEntityMachine extends TileEntitySimple implements ITickable {
 

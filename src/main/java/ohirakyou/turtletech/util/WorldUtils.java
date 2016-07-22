@@ -11,6 +11,13 @@ import net.minecraft.world.World;
 import java.util.List;
 
 public abstract class WorldUtils {
+    public static final int TICKS_PER_DAY = 24000;
+
+    public static boolean isDaytime(World world) {
+        long currentTime = world.getWorldTime();
+        return currentTime >= 450 && currentTime <= 11615;
+    }
+
     public static Vec3d followRayToSolidBlock(World w, Vec3d origin, Vec3d dir, double maxRange){
         Vec3d max = origin.addVector(maxRange * dir.xCoord, maxRange * dir.yCoord, maxRange * dir.zCoord);
         RayTraceResult impact = w.rayTraceBlocks(origin, max, true, true, false);
